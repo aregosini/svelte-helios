@@ -1,0 +1,48 @@
+main {
+    display: flex;
+    flex-direction: column;          /* Impostiamo il layout verticale */
+    align-items: center;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;                /* Impostiamo una altezza minima per il main */
+    overflow-y: auto;                 /* Permette lo scrolling verticale */
+  }
+
+  .charts-container {
+    background-color: #f6f6f6;
+    display: flex;
+    flex-wrap: wrap;                  /* Permette di fare il wrapping dei grafici */
+    justify-content: center;          /* Centra i grafici orizzontalmente */
+    gap: 0;                           /* Rimuove il gap tra i grafici */
+    width: 100%;                      /* Larghezza piena della finestra */
+    padding: 0;                       /* Rimuove padding */
+    margin: 0;                        /* Rimuove margini */
+  }
+
+  .chart-wrapper {
+    width: 33.33%;                    /* Ogni grafico occupa un terzo della larghezza */
+    height: 33.33vw;                  /* L'altezza del grafico è un terzo della larghezza */
+    padding: 0;
+    margin: 0;
+  }
+
+  canvas {
+    width: 100% !important;           /* Imposta la larghezza del canvas al 100% del suo contenitore */
+    height: 100% !important;          /* Imposta l'altezza del canvas al 100% del suo contenitore */
+  }
+
+  /* Media query per schermi più piccoli (ad esempio smartphone) */
+  @media (max-width: 768px) {
+    .chart-wrapper {
+      width: 100%;  /* Ogni grafico occupa tutta la larghezza disponibile */
+      height: 45vw; /* Altezza dinamica in base alla larghezza */
+    }
+  }
+
+  /* Media query per schermi ancora più piccoli (ad esempio telefoni in verticale) */
+  @media (max-width: 480px) {
+    .chart-wrapper {
+      height: 50vw;  /* Più alta l'altezza sui dispositivi più piccoli */
+    }
+  }
