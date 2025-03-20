@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 
 const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 const simulateData = true;
-const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';  // Sostituisci con il tuo URL API
+const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(){
@@ -20,29 +20,18 @@ function fetchDataSim() {
         ret[nome] = [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}];
     })
     return ret;
-    /*
-    return {
-        AIM_COND_H2O: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_H2O_temp: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_Press_H2: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_Prod_Fact: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_Flow_H2_ml: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_Cell_Current: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-        AIM_Cell_Voltage: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}]
-    }
-    */
 }
 
 async function fetchData(second=1) {
     try {
         const response = await fetch(apiUrl+`?second=${second}`);
+        //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`);
+
+        //console.log(apiUrl+`?second=${second}`);
         if (!response.ok) {
             throw new Error('Errore nel recupero dei dati');
         }
         const data = await response.json();
-        if ('pingElettro' in data) 
-            ping_elettro = data['pingElettro'];
-
         return data;  // Assumiamo che i dati siano già nel formato corretto
     } catch (error) {
         console.error('Errore durante la richiesta dei dati:', error);
@@ -98,14 +87,15 @@ export function createCharts(variabili={}) {
 }
 
 // Funzione per aggiornare i grafici con nuovi dati
-export function updateCharts(charts,second=1) {
+export async function updateCharts(charts,second=1) {
     let data;	
 
     if (simulateData)
         data = fetchDataSim();
     else
-        data = fetchData(second); // Ottieni i nuovi dati ogni secondo
+        data = await fetchData(second); // Ottieni i nuovi dati ogni secondo
 
+    //console.log(data);
     Object.keys(charts).forEach((nome) => {
     if (nome in data) {
         const chart = charts[nome];
@@ -118,16 +108,19 @@ export function updateCharts(charts,second=1) {
         );
         chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
         chart.data.datasets[0].data.splice(0, chart.data.datasets[0].data.length - MaxPointGraph);
-        /*
-        while (chart.data.labels.length > MaxPointGraph) {
-            chart.data.labels.shift(); // Rimuove il primo elemento (quello più vecchio)
-            chart.data.datasets[0].data.shift();
-        }
-        */
         if (chart.data.labels.length >= MaxPointGraph)
-            chart.update('none'); //no animazione
+            chart.update('none'); //no animazione. non ci sta dietro!
         else
             chart.update(); // con animazione
     }
     });
+
+    // gestione del pingElettro. Non è l'ottimale visto che lo si fa anche 
+    // quando siamo sulla pagina della serra. Per ora lo lascio qui
+    if ('pingElettro' in data) {
+        // prendo solo il valore dell'ultima riga (la più recente)
+        const lastObject = data.pingElettro[data.pingElettro.length - 1];
+        ping_elettro = lastObject.value;
+        console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
+    }
 }

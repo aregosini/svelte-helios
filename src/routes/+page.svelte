@@ -27,6 +27,7 @@
 	  stato_elettro = utils.ping_elettro;
 
 	  // Aggiorna i grafici ogni secondo con nuovi dati
+	  if (true){
         const interval = setInterval(() => {
             utils.updateCharts(charts);  // Recupera i nuovi dati e aggiorna i grafici
 			stato_elettro = utils.ping_elettro;
@@ -34,6 +35,7 @@
   
 	  // Pulisci l'intervallo quando il componente viene distrutto
 	  return () => clearInterval(interval);
+	}
 	});
 </script>
 
