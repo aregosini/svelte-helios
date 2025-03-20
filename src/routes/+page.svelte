@@ -17,19 +17,7 @@
 		AIM_Cell_Current: "Corrente della cella",
 		AIM_Cell_Voltage: "Tensione della cella"
 	};	
-/*
-	function fetchDataSim() {
-		return {
-			AIM_COND_H2O: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_H2O_temp: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_Press_H2: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_Prod_Fact: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_Flow_H2_ml: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_Cell_Current: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
-			AIM_Cell_Voltage: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}]
-		}
-	}
-*/
+	
 	onMount(() => {
 	  // Inizializza i grafici con i dati iniziali
       let charts = utils.createCharts(grafici); 

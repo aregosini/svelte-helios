@@ -8,7 +8,17 @@ const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';  // 
 function genOra(){
     return `${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}:${Math.floor(Math.random() * 60)}`;
 }	
+
+let nome_var; // salva i nomi delle variabili che sono le chiavi dei grafici
+            // usato solo per simulare i dati casuali dei grafici
 function fetchDataSim() {
+    let ret = {};
+
+    Object.keys(nome_var).forEach((nome) => {
+        ret[nome] = [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}];
+    })
+    return ret;
+    /*
     return {
         AIM_COND_H2O: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
         AIM_H2O_temp: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
@@ -18,6 +28,7 @@ function fetchDataSim() {
         AIM_Cell_Current: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}],
         AIM_Cell_Voltage: [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}]
     }
+    */
 }
 
 async function fetchData() {
@@ -68,6 +79,7 @@ function doChart(nomeChart,descr){
 
 // Funzione per creare i grafici inizialmente
 export function createCharts(grafici) {
+    nome_var = grafici;
     let charts = {};  // Dizionario per contenere tutte le istanze dei grafici
 					  // indicizzato con i nomi delle variabili dichiarate in grafici qui appena sotto
 
