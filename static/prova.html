@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar con Menu a Scomparsa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar in alto */
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-start; /* Allinea il contenuto a sinistra */
+            align-items: center;
+        }
+
+        /* Pulsante per aprire il menu */
+        .menu-btn {
+            background-color: #444;
+            border: none;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* Menu a scomparsa */
+        .menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background-color: #444;
+            flex-direction: column;
+            text-align: center;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        /* Quando il menu è aperto */
+        .menu.open {
+            display: flex;
+        }
+
+        /* Link del menu */
+        .menu a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+            border-bottom: 1px solid #555;
+        }
+
+        .menu a:hover {
+            background-color: #666;
+        }
+
+        /* Contenuto della pagina */
+        .content {
+            padding: 60px 20px; /* Spazio per la navbar */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar con il pulsante del menu a sinistra -->
+    <div class="navbar">
+        <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+    </div>
+
+    <!-- Menu a scomparsa -->
+    <div class="menu" id="menu">
+        <a href="/">Elettrolizzatore</a>
+        <a href="/serra">Serra</a>
+    </div>
+
+    <!-- Contenuto della pagina -->
+    <div class="content">
+        <h1>Benvenuto nella tua pagina</h1>
+        <p>Clicca sul menu per scegliere una pagina</p>
+    </div>
+
+    <script>
+        // Funzione per aprire/chiudere il menu
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            menu.classList.toggle("open");
+        }
+    </script>
+
+</body>
+</html>

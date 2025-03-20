@@ -1,6 +1,12 @@
 	nav {
+		position: fixed;  /* Fissa la navbar in cima */
+		top: 0;
+		left: 0;
+		width: 100%;
+		padding: 10px 0;
+		z-index: 1000;  /* Assicura che la navbar stia sopra il contenuto */
+
 		background-color: #828080;
-		padding: 10px;
 		color: white;
 		text-align: center;
 	  }
