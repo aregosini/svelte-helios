@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto';
 
-const MaxPointGraph = 50; // numro massimo di punti da visualizzare nel grafico
+const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 const simulateData = true;
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';  // Sostituisci con il tuo URL API
 
@@ -9,11 +9,13 @@ function genOra(){
     return `${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}:${Math.floor(Math.random() * 60)}`;
 }	
 
+export let ping_elettro = 1;
 let nome_var; // salva i nomi delle variabili che sono le chiavi dei grafici
             // usato solo per simulare i dati casuali dei grafici
 function fetchDataSim() {
     let ret = {};
 
+    ping_elettro = 1 - ping_elettro;
     Object.keys(nome_var).forEach((nome) => {
         ret[nome] = [{"time":genOra(),"value":Math.floor(Math.random() * 1000)}];
     })
@@ -31,21 +33,24 @@ function fetchDataSim() {
     */
 }
 
-async function fetchData() {
+async function fetchData(second=1) {
     try {
-        const response = await fetch(apiUrl);
-    if (!response.ok) {
-        throw new Error('Errore nel recupero dei dati');
-    }
-    const data = await response.json();
-    return data;  // Assumiamo che i dati siano già nel formato corretto
+        const response = await fetch(apiUrl+`?second=${second}`);
+        if (!response.ok) {
+            throw new Error('Errore nel recupero dei dati');
+        }
+        const data = await response.json();
+        if ('pingElettro' in data) 
+            ping_elettro = data['pingElettro'];
+
+        return data;  // Assumiamo che i dati siano già nel formato corretto
     } catch (error) {
         console.error('Errore durante la richiesta dei dati:', error);
-        return { labels: [], datasets: [] };  // Ritorna un oggetto vuoto in caso di errore
+        return [];  // Ritorna un oggetto vuoto in caso di errore
     }
 }
 
-function doChart(nomeChart,descr){
+function doChart(nomeChart="",descr=""){
     const ctx = document.getElementById(`chart-${nomeChart}`);
     const chart = new Chart(ctx, {		  
         type: 'line',
@@ -78,26 +83,28 @@ function doChart(nomeChart,descr){
 }
 
 // Funzione per creare i grafici inizialmente
-export function createCharts(grafici) {
-    nome_var = grafici;
-    let charts = {};  // Dizionario per contenere tutte le istanze dei grafici
-					  // indicizzato con i nomi delle variabili dichiarate in grafici qui appena sotto
+export function createCharts(variabili={}) {
+    nome_var = variabili;
 
-    Object.keys(grafici).forEach((nome) => {
-        charts[nome] = doChart(nome,grafici[nome]);
+    // Dizionario per contenere tutte le istanze dei grafici
+    // indicizzato con i nomi delle variabili dichiarate in grafici qui appena sotto
+    let charts = {};
+    
+    Object.keys(variabili).forEach((nome) => {
+        charts[nome] = doChart(nome,variabili[nome]);
     })
-    updateCharts(charts);
+    updateCharts(charts,MaxPointGraph); // carica maxpointgraph valori la prima volta
     return charts;
 }
 
 // Funzione per aggiornare i grafici con nuovi dati
-export async function updateCharts(charts) {
+export function updateCharts(charts,second=1) {
     let data;	
 
     if (simulateData)
         data = fetchDataSim();
     else
-        data = await fetchData(); // Ottieni i nuovi dati ogni secondo
+        data = fetchData(second); // Ottieni i nuovi dati ogni secondo
 
     Object.keys(charts).forEach((nome) => {
     if (nome in data) {
@@ -109,11 +116,18 @@ export async function updateCharts(charts) {
                 chart.data.datasets[0].data.push(riga.value);
             }
         );
+        chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
+        chart.data.datasets[0].data.splice(0, chart.data.datasets[0].data.length - MaxPointGraph);
+        /*
         while (chart.data.labels.length > MaxPointGraph) {
             chart.data.labels.shift(); // Rimuove il primo elemento (quello più vecchio)
             chart.data.datasets[0].data.shift();
         }
-        chart.update('none'); // Rende il grafico "live" con i nuovi dati aggiunti
+        */
+        if (chart.data.labels.length >= MaxPointGraph)
+            chart.update('none'); //no animazione
+        else
+            chart.update(); // con animazione
     }
     });
 }

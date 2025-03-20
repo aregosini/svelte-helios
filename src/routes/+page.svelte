@@ -6,6 +6,9 @@
 	import { onMount } from 'svelte';
     import * as utils from '$lib/graph_utils';  // Importa il modulo condiviso
     import Navbar from '../components/navbar.svelte';
+	import Elettro from '../components/stato_elettro.svelte';
+	
+	let stato_elettro = 0;
 
 	// nome delle variabili e descrizione nel grafico
 	const grafici = {
@@ -21,10 +24,12 @@
 	onMount(() => {
 	  // Inizializza i grafici con i dati iniziali
       let charts = utils.createCharts(grafici); 
-  
+	  stato_elettro = utils.ping_elettro;
+
 	  // Aggiorna i grafici ogni secondo con nuovi dati
         const interval = setInterval(() => {
             utils.updateCharts(charts);  // Recupera i nuovi dati e aggiorna i grafici
+			stato_elettro = utils.ping_elettro;
         }, 1000);
   
 	  // Pulisci l'intervallo quando il componente viene distrutto
@@ -35,6 +40,7 @@
   <main>
     <Navbar />
     <h1>Elettrolizzatore</h1>
+	<Elettro {stato_elettro}/>
 
 	<div class="charts-container">
 	  {#each Object.keys(grafici) as nome}
