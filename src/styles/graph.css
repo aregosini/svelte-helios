@@ -30,6 +30,7 @@ main {
   canvas {
     width: 100% !important;           /* Imposta la larghezza del canvas al 100% del suo contenitore */
     height: 100% !important;          /* Imposta l'altezza del canvas al 100% del suo contenitore */
+    padding: 10px;
   }
 
   /* Media query per schermi più piccoli (ad esempio smartphone) */
