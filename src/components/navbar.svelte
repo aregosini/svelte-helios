@@ -7,16 +7,13 @@
         width: 100%;
         padding: 10px 0;
         z-index: 1000;  /* Assicura che la navbar stia sopra il contenuto */
-        background-color: #828080;
+        background-color: #5e5d5d;
         color: white;
     }
 
     /* Navbar container */
     .navbar {
         display: flex;          /* Usa Flexbox per il layout */
-        justify-content: flex-start; /* Allinea il contenuto a sinistra */
-        align-items: center;    /* Allinea verticalmente gli elementi */
-        width: 100%;            /* Fissa la navbar a larghezza piena */
         padding: 0 20px;        /* Distanza tra il contenuto e i bordi */
     }
 
@@ -37,7 +34,7 @@
         position: absolute;
         top: 50px;             /* Posiziona il menu subito sotto la navbar */
         left: 0;
-        background-color: #090909;
+        background-color: #2d2c2c;
         flex-direction: column;
         text-align: left;
         border-radius: 5px;
@@ -75,7 +72,7 @@
 
 <nav>
     <div class="navbar">
-        <button class="menu-btn" on:click={toggleMenu}>☰ Menu</button>
+        <button class="menu-btn" on:click={toggleMenu}>☰ Scegli grafici</button>
     </div>
 
     <!-- Menu a scomparsa -->
