@@ -1,13 +1,3 @@
-<script>
-    // Variabile di stato per il menu
-    let menuOpen = false;
-
-    // Funzione per aprire/chiudere il menu
-    function toggleMenu() {
-        menuOpen = !menuOpen;  // Cambia lo stato del menu
-    }
-</script>
-
 <style>
     /* Navbar in alto */
     nav {
@@ -73,6 +63,15 @@
         background-color: #666;
     }
 </style>
+<script>
+    // Variabile di stato per il menu
+    let menuOpen = false;
+
+    // Funzione per aprire/chiudere il menu
+    function toggleMenu() {
+        menuOpen = !menuOpen;  // Cambia lo stato del menu
+    }
+</script>
 
 <nav>
     <div class="navbar">
