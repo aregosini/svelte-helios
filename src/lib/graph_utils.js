@@ -9,7 +9,7 @@ function genOra(){
     return `${Math.floor(Math.random() * 24)}:${Math.floor(Math.random() * 60)}:${Math.floor(Math.random() * 60)}`;
 }	
 
-export let ping_elettro = 1;
+export let ping_elettro = 0;
 let nome_var; // salva i nomi delle variabili che sono le chiavi dei grafici
             // usato solo per simulare i dati casuali dei grafici
 function fetchDataSim() {
@@ -97,22 +97,22 @@ export async function updateCharts(charts,second=1) {
 
     //console.log(data);
     Object.keys(charts).forEach((nome) => {
-    if (nome in data) {
-        const chart = charts[nome];
-        const dati = data[nome];
-        dati.forEach(
-            (riga) => {
-                chart.data.labels.push(riga.time);
-                chart.data.datasets[0].data.push(riga.value);
-            }
-        );
-        chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
-        chart.data.datasets[0].data.splice(0, chart.data.datasets[0].data.length - MaxPointGraph);
-        if (chart.data.labels.length >= MaxPointGraph)
-            chart.update('none'); //no animazione. non ci sta dietro!
-        else
-            chart.update(); // con animazione
-    }
+        if (nome in data) {
+            const chart = charts[nome];
+            const dati = data[nome];
+            dati.forEach(
+                (riga) => {
+                    chart.data.labels.push(riga.time);
+                    chart.data.datasets[0].data.push(riga.value);
+                }
+            );
+            chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
+            chart.data.datasets[0].data.splice(0, chart.data.datasets[0].data.length - MaxPointGraph);
+            if (chart.data.labels.length >= MaxPointGraph)
+                chart.update('none'); //no animazione. non ci sta dietro!
+            else
+                chart.update(); // con animazione
+        }
     });
 
     // gestione del pingElettro. Non è l'ottimale visto che lo si fa anche 
@@ -123,4 +123,5 @@ export async function updateCharts(charts,second=1) {
         ping_elettro = lastObject.value;
         console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
     }
+    else ping_elettro = 0;
 }
