@@ -36,20 +36,10 @@
 	  // Pulisci l'intervallo quando il componente viene distrutto
 	  return () => clearInterval(interval);
 	}
-	
+
 	});
 	// Aggiungi un listener per ricevere i messaggi
-	window.addEventListener("message", function(event) {
-		console.log('in message: '+event.origin)
-		// Verifica se il messaggio proviene dal dominio corretto
-		//if (event.origin === "https://www.heliosproject.it") {
-		if (event.data === "getHeight") {
-			// Invia l'altezza del corpo dell'iframe al sito principale
-			var bodyHeight = document.body.scrollHeight;
-			event.source.postMessage(bodyHeight, event.origin);
-		}
-		//}
-	});
+	
 </script>
 
   <main>
