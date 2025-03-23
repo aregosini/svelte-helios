@@ -125,3 +125,4 @@ export async function updateCharts(charts,second=1) {
     }
     else ping_elettro = 0;
 }
+
