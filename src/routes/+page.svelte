@@ -36,7 +36,6 @@
 	  // Pulisci l'intervallo quando il componente viene distrutto
 	  return () => clearInterval(interval);
 	}
-	});
 	// Aggiungi un listener per ricevere i messaggi
 	window.addEventListener("message", function(event) {
 		console.log('in message')
@@ -49,6 +48,8 @@
 		}
 		}
 	});
+	});
+	
 </script>
 
   <main>
