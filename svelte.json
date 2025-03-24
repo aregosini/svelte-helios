@@ -8,11 +8,11 @@
     ],
     "headers": [
       {
-        "source": "/(.*)",  // Aggiungi headers CORS per tutte le risorse
+        "source": "/(.*)",  
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
-            "value": "*"  // Permetti a tutte le origini di accedere al tuo sito
+            "value": "*"  
           },
           {
             "key": "Access-Control-Allow-Methods",
