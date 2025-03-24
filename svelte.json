@@ -1,0 +1,29 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "src/app.html",
+        "use": "@vercel/static"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/(.*)",  // Aggiungi headers CORS per tutte le risorse
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"  // Permetti a tutte le origini di accedere al tuo sito
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET, POST, OPTIONS"
+          },
+          {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type"
+          }
+        ]
+      }
+    ]
+  }
+  
