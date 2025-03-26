@@ -9,13 +9,13 @@
 
 	// nome delle variabili e descrizione nel grafico
 	const grafici = {
-		temeratura1: "Temperatura 1",
-		temeratura2: "Temperatura 2",
-		pH1: "PH 1",
-		pH2: "PH 2",
-		conducimetro1: "Conducimetro 1",
-		conducimetro2: "Conducimetro 2"
-	};	
+        temeratura1: {descr:"Temperatura 1"},
+        temeratura2: {descr:"Temperatura 2"},
+        pH1: {descr:"PH 1"},
+        pH2: {descr:"PH 2"},
+        conducimetro1: {descr:"Conducimetro 1"},
+        conducimetro2: {descr:"Conducimetro 2"}
+    };
 	
 /*
 	function fetchDataSim() {
@@ -37,7 +37,7 @@
 	  // Aggiorna i grafici ogni secondo con nuovi dati
 		const interval = setInterval(() => {
 			utils.updateCharts(charts);  // Recupera i nuovi dati e aggiorna i grafici
-		}, 1000);
+		}, 2000);
   
 	  // Pulisci l'intervallo quando il componente viene distrutto
 	  return () => clearInterval(interval);

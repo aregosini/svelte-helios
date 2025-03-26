@@ -12,13 +12,13 @@
 
 	// nome delle variabili e descrizione nel grafico
 	const grafici = {
-		AIM_COND_H2O: "Conducimetro H2O",
-		AIM_H2O_temp: "Temperatura H2O",
-		AIM_Press_H2: "Pressione H2",
-		AIM_Prod_Fact: "PROD FACT",
-		AIM_Flow_H2_ml: "Flusso H2 in ml",
-		AIM_Cell_Current: "Corrente della cella",
-		AIM_Cell_Voltage: "Tensione della cella"
+		AIM_COND_H2O: {descr:"Conducimetro H2O",ymin:0,ymax:0.6},
+		AIM_H2O_temp: {descr:"Temperatura H2O",ymin:0,ymax:50},
+		AIM_Press_H2: {descr:"Pressione H2",ymin:0,ymax:18},
+		AIM_Prod_Fact: {descr:"Produzione H2 in %",ymin:0,ymax:100},
+		AIM_Flow_H2_ml: {descr:"Flusso H2 in ml",ymin:0,ymax:200},
+		AIM_Cell_Current: {descr:"Corrente della cella",ymin:0,ymax:6.5},
+		AIM_Cell_Voltage: {descr:"Tensione della cella",ymin:0,ymax:25}
 	};	
 	
 	onMount(() => {
@@ -31,7 +31,7 @@
         const interval = setInterval(() => {
             utils.updateCharts(charts);  // Recupera i nuovi dati e aggiorna i grafici
 			stato_elettro = utils.ping_elettro;
-        }, 1000);
+        }, 2000);
   
 	  // Pulisci l'intervallo quando il componente viene distrutto
 	  return () => clearInterval(interval);

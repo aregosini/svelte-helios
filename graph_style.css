@@ -1,0 +1,143 @@
+/* pagina principale dei grafici*/
+dashboard {
+  display: flex;
+  flex-direction: column;          /* Impostiamo il layout verticale */
+  align-items: center;
+  background-color: #ffffff;
+  margin-top: 50px;
+  padding: 0;
+  min-height: 100vh;                /* Impostiamo una altezza minima per il main */
+  overflow-y: auto;                 /* Permette lo scrolling verticale */
+}
+
+.charts-container {
+  background-color: #f6f6f6;
+  display: flex;
+  flex-wrap: wrap;                  /* Permette di fare il wrapping dei grafici */
+  justify-content: center;          /* Centra i grafici orizzontalmente */
+  gap: 0;                           /* Rimuove il gap tra i grafici */
+  width: 100%;                      /* Larghezza piena della finestra */
+  padding: 0;                       /* Rimuove padding */
+  margin: 0;                        /* Rimuove margini */
+}
+
+.chart-wrapper {
+  width: 33.33%;                    /* Ogni grafico occupa un terzo della larghezza */
+  height: 33.33vw;                  /* L'altezza del grafico è un terzo della larghezza */
+  padding: 0;
+  margin: 0;
+}
+
+canvas {
+  width: 100% !important;           /* Imposta la larghezza del canvas al 100% del suo contenitore */
+  height: 100% !important;          /* Imposta l'altezza del canvas al 100% del suo contenitore */
+  padding: 10px;
+}
+
+/* Media query per schermi più piccoli (ad esempio smartphone) */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    width: 100%;  /* Ogni grafico occupa tutta la larghezza disponibile */
+    height: 45vw; /* Altezza dinamica in base alla larghezza */
+  }
+}
+
+/* Media query per schermi ancora più piccoli (ad esempio telefoni in verticale) */
+@media (max-width: 480px) {
+  .chart-wrapper {
+    height: 50vw;  /* Più alta l'altezza sui dispositivi più piccoli */
+  }
+}
+
+/***********************
+
+/* Navbar in alto 
+**********************/
+mynav {
+    /*
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 1000;  
+  */
+  position: relative;  /* Cambiato da 'fixed' a 'relative' */
+  width: 100%;
+  padding: 10px 0;
+  background-color: #5e5d5d;
+  color: white;
+}
+
+/* Navbar container */
+.mynavbar {
+  display: flex;          /* Usa Flexbox per il layout */
+  padding: 0 20px;        /* Distanza tra il contenuto e i bordi */
+}
+
+/* Pulsante per aprire il menu */
+.menu-btn {
+  background-color: #444;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Menu a scomparsa */
+.menu {
+  display: none;
+  position: absolute;
+  top: 50px;             /* Posiziona il menu subito sotto la navbar */
+  left: 0;
+  background-color: #2d2c2c;
+  flex-direction: column;
+  text-align: left;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+/* Quando il menu è aperto */
+.menu.open {
+  display: flex;
+}
+
+/* Link del menu */
+.menu a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 18px;
+  display: block;
+  border-bottom: 1px solid #555;
+}
+
+.menu a:hover {
+  background-color: #666;
+}
+
+
+/*****************
+stato elettrolizzatore
+****************/
+.status-container {
+ display: flex;
+ font-size: 18px;
+ margin-left: 0; /* Allinea il contenitore a sinistra */
+ margin-bottom: 10px;
+ width: 95%; /* Imposta una larghezza se necessario */
+}
+
+.status-text {
+ margin-left: 10px;  /* Distanza tra il testo e il pallino */
+}
+
+.status-dot {
+ width: 20px;
+ height: 20px;
+ border-radius: 50%;
+ /*background-color: var(--dot-color);*/
+}
+.hidden {
+  visibility: hidden;
+}

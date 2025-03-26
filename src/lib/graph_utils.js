@@ -1,7 +1,7 @@
 import Chart from 'chart.js/auto';
 
 const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
-const simulateData = true;
+const simulateData = false;
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
@@ -24,7 +24,7 @@ function fetchDataSim() {
 
 async function fetchData(second=1) {
     try {
-        const response = await fetch(apiUrl+`?second=${second}`);
+        const response = await fetch(apiUrl+`?second=${second}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`);
 
         //console.log(apiUrl+`?second=${second}`);
@@ -39,9 +39,9 @@ async function fetchData(second=1) {
     }
 }
 
-function doChart(nomeChart="",descr=""){
+function doChart(nomeChart="",opt={descr:'',ymin:-5,ymax:20}){
     const ctx = document.getElementById(`chart-${nomeChart}`);
-    const chart = new Chart(ctx, {		  
+    const optChart = {		  
         type: 'line',
         data: {
         //labels: [],
@@ -55,19 +55,25 @@ function doChart(nomeChart="",descr=""){
             }]
         },
         options: {
-        plugins: {
-            title: {
-                display: true,
-                text: descr
+            plugins: {
+                title: {
+                    display: true,
+                    text: opt.descr
+                },
+                legend: {
+                    display: false // Disabilita la visualizzazione della leggenda
+                }
             },
-            legend: {
-                display: false // Disabilita la visualizzazione della leggenda
-            }
-        },
         responsive: true,
-        maintainAspectRatio: false  // Permette di fare in modo che il canvas possa adattarsi alla dimensione del contenitore
+        maintainAspectRatio: false,  // Permette di fare in modo che il canvas possa adattarsi alla dimensione del contenitore
         }
-    });
+    };
+    if ('ymin' in opt){
+        optChart.options.scales = {
+            y: { min: opt.ymin, max: opt.ymax}
+        }
+    }
+    const chart = new Chart(ctx, optChart);
     return chart;
 }
 
@@ -87,7 +93,7 @@ export function createCharts(variabili={}) {
 }
 
 // Funzione per aggiornare i grafici con nuovi dati
-export async function updateCharts(charts,second=1) {
+export async function updateCharts(charts,second=2) {
     let data;	
 
     if (simulateData)
