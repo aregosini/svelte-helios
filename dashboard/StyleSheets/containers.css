@@ -1,0 +1,245 @@
+#first-container {
+    width: calc(100% - 100px); /* Same as .text-container's left and right margins */
+    max-width: 133.33vh; /* Match the max-width of other elements if needed */
+    margin-bottom: 40px;
+    margin-top: 100px !important;
+    padding: 20px;
+    background-color: #0c7a0e !important;
+    border-radius: 1.33vh;
+    color: white;
+    margin: 0 auto; /* Center align */
+}
+
+.text-container, #first-container {
+    border: 0.13vh solid #ccc;
+    padding: 2.67vh;
+    box-shadow: 0 0.53vh 1.07vh rgba(0, 0, 0, 0.1);
+    border-radius: 1.33vh;
+    background-color: #d1dac7;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 0 auto; /* Center align */
+}
+
+.highlight {
+    border-color: #40d42c;
+    box-shadow: 0 1.07vh 2.14vh rgba(49, 49, 49, 0.5);
+}
+
+.text-container h1, .text-container h2 {
+    color: #40d42c;
+    text-align: center;
+}
+
+.text-container p, .text-container ul {
+    color: #333;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.text-container img {
+    margin-top: 20px;
+    display: block;
+    margin: 0 auto 20px;
+    max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 1.33vh; /* Round the corners */
+}
+
+.text-container .image-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.text-container .image-row {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end; /* Align the image on the right */
+}
+
+.image-row img {
+    flex: 1;
+    width: 45%; /* Make the images a little bit smaller */
+    height: 250px; /* Set a fixed height to make images taller */
+    object-fit: contain; /* Ensure the image is fully visible */
+    border-radius: 1.33vh; /* Round the corners */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cards-container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center; /* Center the cards horizontally */
+    flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    margin: 0 auto; /* Center align */
+}
+
+.big-card-box, .card {
+    margin: 50px !important;
+    border-radius: 1.33vh;
+    box-shadow: 0 0.53vh 1.07vh rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.big-card-box {
+    display: flex;
+    padding: 2.67vh;
+    max-width: 133.33vh;
+}
+
+.big-card-img-container, .big-card-img {
+    border-radius: 10px !important;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.big-card-img-container {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.big-card-img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+.big-card-text-container {
+    padding-top: 2.67vh;
+    padding-bottom: 2.67vh;
+    flex: 1;
+    text-align: left;
+}
+
+.big-card-title-ahh, .card-title {
+    font-weight: bold;
+    color: #333;
+    transition: color 0.2s ease-in-out;
+}
+
+.big-card-title-ahh {
+    margin-bottom: 1.33vh;
+}
+
+.big-card-text, .card-text {
+    font-size: 2.5vh;
+    line-height: 1.6;
+    color: #555;
+}
+
+.big-card-text {
+    margin-top: 1.33vh;
+    margin-left: 2vh;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2.67vh;
+    max-width: 133.33vh;
+    margin: 2.67vh auto;
+    margin: 0 auto; /* Center align */
+}
+
+.card {
+    width: 44.44vh;
+    max-width: 44.44vh;
+    text-align: center;
+    margin: 3vh 0;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.card-title, .card-date, .card-text {
+    margin: 1.33vh 0;
+    padding: 0 1.33vh;
+}
+
+.card-date {
+    color: #888;
+    font-size: 2vh;
+}
+
+@media (max-width: 992px) {
+
+    .text-container .image-row {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .big-card-box {
+        flex-direction: column;
+        align-items: center;
+        max-width: 100%;
+        padding: 2vh;
+        margin-bottom: 10vh;
+    }
+
+    .big-card-img-container, .big-card-text-container {
+        width: auto;
+        height: auto;
+        min-width: 200px !important; /* Minimum width for images on mobile */
+    }
+
+    .big-card-img {
+        width: 40%;
+        height: auto; /* Ensure the image is not vertically cut */
+        min-width: 200px !important; /* Minimum height for images on mobile */
+    }
+
+    .big-card-text-container {
+        text-align: center;
+    }
+
+    .big-card-title-ahh {
+        font-size: 3vh;
+    }
+
+    .big-card-text {
+        font-size: 2vh;
+        text-align: left;
+    }
+
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 2vh;
+    }
+
+    .big-card-img-mobile {
+        content: url('../resources/imgs/serrabordo-mobile.jpg');
+        width: 200%;
+        height: auto;
+    }
+}
+
+.cards-center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; /* Center align */
+}

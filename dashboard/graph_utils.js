@@ -5,6 +5,7 @@ const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
 let pagina; // pagina 'elettro' o 'serra'
 let grafici={}; //usato per nomi variabili e grafici
 let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzatore e dei sensori della serra
+let oneChart = true; // temp, ph e conducimetro rispettivamente nello stesso grafico?
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
@@ -56,9 +57,13 @@ async function fetchData(second=timeLaps) {
     }
 }
 
-function doChart(nome=""){
-    const opt = grafici[nome];
+function doChart(nome,opt){
     const ctx = document.getElementById(`chart-${nome}`);
+    if (opt.label === undefined)
+        opt.label="";
+    if (opt.dataset === undefined)
+        opt.dataset=0;
+
     const optChart = {		  
         type: 'line',
         data: {
@@ -67,7 +72,7 @@ function doChart(nome=""){
         datasets: [{ 
             //data: generateRandomData(),
             data: [],
-            //label: "",
+            label: opt.label,
             borderColor: `#${Math.floor(Math.random()*16777215).toString(16)}`,
             fill: false
             }]
@@ -79,7 +84,13 @@ function doChart(nome=""){
                     text: opt.descr
                 },
                 legend: {
+                    //align:'start',
+                    labels:{
+                        usePointStyle: true,
+                        pointStyle : 'rect'
+                    },
                     display: false // Disabilita la visualizzazione della leggenda
+
                 }
             },
             responsive: true,
@@ -93,16 +104,6 @@ function doChart(nome=""){
     }
     const chart = new Chart(ctx, optChart);
     return chart;
-}
-
-// Funzione per creare i grafici inizialmente
-function createCharts() {
-    // Dizionario per contenere tutte le istanze dei grafici
-    // indicizzato con i nomi delle variabili dichiarate in grafici qui appena sotto
-    Object.keys(grafici).forEach((nome) => {
-        grafici[nome].chart = doChart(nome);
-    })
-    updateCharts(MaxPointGraph); // carica maxpointgraph valori la prima volta
 }
 
 // Funzione per aggiornare i grafici con nuovi dati
@@ -120,14 +121,15 @@ async function updateCharts(second=timeLaps) {
         if (nome in data) {
             const chart = grafici[nome].chart;
             const dati = data[nome];
+            const ds = grafici[nome].dataset;
             dati.forEach(
                 (riga) => {
                     chart.data.labels.push(riga.time);
-                    chart.data.datasets[0].data.push(riga.value);
+                    chart.data.datasets[ds].data.push(riga.value);
                 }
             );
             chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
-            chart.data.datasets[0].data.splice(0, chart.data.datasets[0].data.length - MaxPointGraph);
+            chart.data.datasets[ds].data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
             if (chart.data.labels.length >= MaxPointGraph)
                 chart.update('none'); //no animazione. non ci sta dietro!
             else
@@ -204,14 +206,24 @@ function paginaSerra(){
     //document.getElementById('status-container').classList.add('hidden');
     document.getElementById('titolo-pagina').innerText='Serra idroponica';
     updateStatoPagina = updateStatoSerra;
-    grafici = {
-        temeratura1: {descr:"Temperatura 1 in °C",y:17.3,ymin:5,ymax:25},
-        temeratura2: {descr:"Temperatura 2 in °C",y:16.8,ymin:5,ymax:22},
-        pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
-        pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
-        conducimetro1: {descr:"Conducimetro 1",y:1800,ymin:0,ymax:3500},
-        conducimetro2: {descr:"Conducimetro 2",y:1770,ymin:0,ymax:3500}
-    };
+    if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro
+        grafici = {
+            temperatura1: {descr:"Temperatura in °C",y:17.3,ymin:5,ymax:25,label:'temp. 1'},
+            temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:22},
+            pH1: {descr:"PH",y:4.4,ymin:0,ymax:8,label:'PH 1'},
+            pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:8},
+            conducimetro1: {descr:"Conducimetro",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
+            conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'cond. 2',y:1770,ymin:0,ymax:3500}
+        };
+    else
+        grafici = {
+            temperatura1: {descr:"Temperatura 1 in °C",y:17.3,ymin:5,ymax:25},
+            temperatura2: {descr:"Temperatura 2 in °C",y:16.8,ymin:5,ymax:22},
+            pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
+            pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
+            conducimetro1: {descr:"Conducimetro 1",y:1800,ymin:0,ymax:3500},
+            conducimetro2: {descr:"Conducimetro 2",y:1770,ymin:0,ymax:3500}
+        };
     init();
 }
 
@@ -229,12 +241,27 @@ function init() {
     chartsContainer.innerHTML = '';
     destroyCharts();
     Object.keys(grafici).forEach((nome) => {
-        const chartWrapper = document.createElement('div');
-        chartWrapper.classList.add('chart-wrapper');
-        chartWrapper.innerHTML = `<canvas id="chart-${nome}" width="300" height="250"></canvas>`;
-        chartsContainer.appendChild(chartWrapper);
+        val = grafici[nome];
+        if (!('inGrafico' in val)) { // non è una seconda serie di dati
+            const chartWrapper = document.createElement('div');
+            chartWrapper.classList.add('chart-wrapper');
+            chartWrapper.innerHTML = `<canvas id="chart-${nome}" width="300" height="250"></canvas>`;
+            chartsContainer.appendChild(chartWrapper);
+            val.chart = doChart(nome,val);
+        }
+        else {  // lo mettiamo nello stesso grafico già creato
+            val.chart = grafici[val.inGrafico].chart; 
+            val.chart.data.datasets[val.dataset] = { 
+                data: [],
+                label: val.label,
+                borderColor: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+                fill: false
+            }
+            // fa vedere le label delle serie
+            val.chart.options.plugins.legend.display=true;
+        }
     });
-    createCharts();
+    updateCharts(MaxPointGraph);
 }
 
 
@@ -263,11 +290,18 @@ window.onload = function() {
         simulateData = false;
         timeLaps = 2; // ogni secondo non in simulazione
     }
+    if (params.has('noonechart')) {
+        oneChart = false;
+    }
+    
     // Aggiungi il listener per il clic del pulsante del menu
     document.getElementById('menu-btn').addEventListener('click', toggleMenu);
     document.getElementById('menu-elettro').addEventListener('click', paginaElettro);
     document.getElementById('menu-serra').addEventListener('click', paginaSerra)
-    paginaElettro();
+    if (params.has('serra')) {
+        paginaSerra();
+    }
+    else paginaElettro();
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
         updateCharts(); // Aggiorna i grafici
