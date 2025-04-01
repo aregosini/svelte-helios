@@ -10,6 +10,14 @@ dashboard {
   overflow-y: auto;                 /* Permette lo scrolling verticale */
 }
 
+#titolo-pagina{
+  font-size: 2.4em; /* Dimensione del titolo */
+  color: #333; /* Colore del testo (opzionale) */
+  font-family: sans-serif; /* Tipo di carattere (opzionale) */
+  font-weight: bold;
+  padding:10px;
+}
+
 .charts-container {
   background-color: #f6f6f6;
   display: flex;

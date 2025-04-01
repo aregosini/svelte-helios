@@ -196,6 +196,28 @@ function paginaElettro(){
 		AIM_Cell_Voltage: {descr:"Tensione della cella in V",y:19,ymin:0,ymax:25}
 	};
     init();
+    const chartsContainer = document.getElementById('charts-container');
+    let wrapper = document.createElement('div');
+    wrapper.classList.add('chart-wrapper');
+    wrapper.innerHTML = `
+        <div id="status-alarm" class="status-container">
+            <div id="status-dot-alarm" class="status-dot"></div>
+            <span id="status-text-alarm" class="status-text">Alarms</span>
+        </div>`;
+    chartsContainer.appendChild(wrapper);
+    let statusDot = document.getElementById('status-dot-alarm');
+    statusDot.style.backgroundColor = "green";
+
+    wrapper = document.createElement('div');
+    wrapper.classList.add('chart-wrapper');
+    wrapper.innerHTML = `
+        <div id="status-alarm" class="status-container">
+            <div id="status-dot-warning" class="status-dot"></div>
+            <span id="status-text-warning" class="status-text">Warnings</span>
+        </div>`;
+    chartsContainer.appendChild(wrapper);
+    statusDot = document.getElementById('status-dot-warning');
+    statusDot.style.backgroundColor = "green";
 }
 
 function paginaSerra(){
