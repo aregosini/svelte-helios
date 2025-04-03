@@ -118,40 +118,42 @@
     </div>
 
        <!-- Includiamo il content della DASHBOARD -->
-        <dashboard>
-            <mynav>
-                <div class="mynavbar">
-                    <button class="menu-btn" id="menu-btn">☰ Scegli grafici</button>
-                    <div class="visualizza-container">
-                      <small>Visualizza</small>
-                      <select id="visualizza">
-                        <option value="realtime" selected>Tempo reale, ultimo minuto</option>
-                        <option value="ultimi5minuti" >Ultimi 5 minuti</option>
-                        <option value="ultimora">Ultima ora</option>
-                        <option value="daInizioGiornata">Da inizio giornata</option>
-                      </select>
-                    </div>
+       <dashboard>
+        <mynav>
+            <div class="mynavbar">
+                <button class="menu-btn" id="menu-btn">☰ Scegli grafici</button>
+                <div class="visualizza-container">
+                  <small>Visualizza</small>
+                  <select id="visualizza">
+                    <option value="realtime" selected>Tempo reale, ultimo minuto</option>
+                    <option value="ultimi5minuti" >Ultimi 5 minuti</option>
+                    <option value="ultimora">Ultima ora</option>
+                    <option value="daInizioGiornata">Da inizio giornata</option>
+                  </select>
+                </div>
+                <div class="visualizza-container">
                     <label>
                       <input type="checkbox" id="scalaGraficiAutomatica"> Scala grafici automatica
                     </label>
                 </div>
-                <!-- Menu a scomparsa -->
-                <div class="menu" id="menu">
-                    <a id="menu-elettro" >Elettrolizzatore</a>
-                    <a id="menu-serra" >Serra</a>
-                </div>
-            </mynav>
+            </div>
+            <!-- Menu a scomparsa -->
+            <div class="menu" id="menu">
+                <a id="menu-elettro" >Elettrolizzatore</a>
+                <a id="menu-serra" >Serra</a>
+            </div>
+        </mynav>
 
-            <div id="titolo-pagina">Elettrolizzatore</div>
-            <div id="status-container" class="status-container">
-                <div id="status-dot" class="status-dot"></div>
-                <span id="status-text" class="status-text"></span>
-            </div>
-        
-            <div class="charts-container" id="charts-container">
-                <!-- Qui verranno inseriti i grafici -->
-            </div>
-          </dashboard>
+        <div id="titolo-pagina">Elettrolizzatore</div>
+        <div id="status-container" class="status-container">
+            <div id="status-dot" class="status-dot"></div>
+            <span id="status-text" class="status-text"></span>
+        </div>
+    
+        <div class="charts-container" id="charts-container">
+            <!-- Qui verranno inseriti i grafici -->
+        </div>
+      </dashboard>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="graph_utils.js"></script>
    <!-- dashboard -->

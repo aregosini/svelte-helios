@@ -57,7 +57,6 @@ canvas {
   }
   .mynavbar {
     flex-direction: column;
-    align-items: flex-start;
   }
   .visualizza-container, label {
     margin-left: 0;
@@ -87,6 +86,7 @@ mynav {
   display: flex;          /* Usa Flexbox per il layout */
   padding: 0 20px;        /* Distanza tra il contenuto e i bordi */
   flex-wrap: wrap;
+  
 }
 
 /* Pulsante per aprire il menu */
@@ -145,7 +145,7 @@ mynav {
 }
 
 /* Stile per la checkbox */
-label input[type="checkbox"] {
+.mynavbar label input[type="checkbox"] {
   appearance: none; /* Rimuove lo stile predefinito del browser */
   width: 20px;
   height: 20px;
@@ -156,12 +156,12 @@ label input[type="checkbox"] {
   cursor: pointer;
 }
 
-label input[type="checkbox"]:checked {
+.mynavbar label input[type="checkbox"]:checked {
   background-color: #007bff; /* Colore di sfondo quando selezionato */
   border-color: #007bff;
 }
 
-label input[type="checkbox"]:checked::before {
+.mynavbar label input[type="checkbox"]:checked::before {
   content: '\2713'; /* Simbolo di spunta */
   font-size: 16px;
   color: white;
