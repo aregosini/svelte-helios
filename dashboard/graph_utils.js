@@ -8,6 +8,7 @@ let pagina; // pagina 'elettro' o 'serra'
 let grafici={}; //usato per nomi variabili e grafici
 let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzatore e dei sensori della serra
 let oneChart = true; // temp, ph e conducimetro rispettivamente nello stesso grafico?
+let scalaGraficiAutomatica = false;
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
@@ -313,6 +314,7 @@ function init() {
         }
     });
     updateCharts(MaxPointGraph);
+    gestScalaGrafici();
 }
 
 
@@ -367,8 +369,24 @@ function gestVisualizza(){
 }
 
 function gestScalaGrafici(){
-    const isChecked = this.checked;
-    console.log('Checkbox "Scala grafici automatica" selezionata:', isChecked);    
+    if (this.checked !== undefined)
+        scalaGraficiAutomatica = this.checked;
+    //console.log('Checkbox "Scala grafici automatica" selezionata:', scalaGraficiAutomatica);    
+    Object.keys(grafici).forEach((nome) => {
+        if (grafici[nome].inGrafico !== undefined){
+            return;
+        }
+        let chart = grafici[nome].chart;
+        if (scalaGraficiAutomatica) {
+            chart.originalY = chart.options.scales.y;
+            delete (chart.options.scales.y);
+        }
+        else {
+            if (chart.originalY !== undefined)
+                chart.options.scales.y = chart.originalY;
+        }
+        chart.update();
+    });
 }
 
 // Inizializza la pagina

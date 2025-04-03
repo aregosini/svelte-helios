@@ -46,14 +46,14 @@ canvas {
 @media (max-width: 768px) {
   .chart-wrapper {
     width: 100%;  /* Ogni grafico occupa tutta la larghezza disponibile */
-    height: 45vw; /* Altezza dinamica in base alla larghezza */
+    height: 50vw; /* Altezza dinamica in base alla larghezza */
   }
 }
 
 /* Media query per schermi ancora più piccoli (ad esempio telefoni in verticale) */
 @media (max-width: 480px) {
   .chart-wrapper {
-    height: 50vw;  /* Più alta l'altezza sui dispositivi più piccoli */
+    height: 60vw;  /* Più alta l'altezza sui dispositivi più piccoli */
   }
   .mynavbar {
     flex-direction: column;
