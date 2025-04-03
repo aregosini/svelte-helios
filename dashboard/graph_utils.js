@@ -92,7 +92,7 @@ function doChart(nome,opt){
                         usePointStyle: true,
                         pointStyle : 'rect'
                     },
-                    display: false // Disabilita la visualizzazione della leggenda
+                    display: false // Disabilita la visualizzazione della legenda
 
                 }
             },
