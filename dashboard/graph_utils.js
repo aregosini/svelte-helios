@@ -45,7 +45,7 @@ function fetchDataSim(second=timeLaps) {
 
 async function fetchData(second=timeLaps) {
     try {
-        const response = await fetch(apiUrl+`?second=${second}`,{ cache: 'no-store' });
+        const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
         //console.log(apiUrl+`?second=${second}`);
@@ -140,11 +140,13 @@ function adjData(data){
 async function updateCharts(second=timeLaps) {
     let data;	
 
-    if (simulateData)
+    if (simulateData) {
         data = fetchDataSim(second);
+        adjData(data); //solo se simulati. 
+    }
     else
+        // no adjData perché lo fa già lo script php sul server
         data = await fetchData(second); // Ottieni i nuovi dati ogni second
-    adjData(data);
     updateStatoPagina(data);
     //console.log(data);
     Object.keys(grafici).forEach((nome) => {
