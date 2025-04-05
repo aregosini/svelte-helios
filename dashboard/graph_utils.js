@@ -45,7 +45,7 @@ function fetchDataSim(second=timeLaps) {
 
 async function fetchData(second=timeLaps) {
     try {
-        const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}`,{ cache: 'no-store' });
+        const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
         //console.log(apiUrl+`?second=${second}`);
