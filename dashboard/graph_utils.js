@@ -391,6 +391,22 @@ function gestScalaGrafici(){
     });
 }
 
+function toggleSimula(){
+    simulateData = !simulateData;
+    const url = new URL(window.location.href);
+    if (!simulateData)
+        url.searchParams.set('nosim',null);
+    else
+        url.searchParams.delete('nosim');
+    console.log('reload');
+    window.location.href = url.toString();
+    /*if (pagina == 'elettro')
+        paginaElettro();
+    else
+        paginaSerra();
+    */
+}
+
 // Inizializza la pagina
 window.onload = function() {
     const params = new URLSearchParams(window.location.search);
@@ -405,6 +421,7 @@ window.onload = function() {
     
     // Aggiungi il listener per il clic del pulsante del menu
     document.getElementById('menu-btn').addEventListener('click', toggleMenu);
+    document.getElementById('mynavbar').addEventListener('dblclick', toggleSimula);
     document.getElementById('menu-elettro').addEventListener('click', paginaElettro);
     document.getElementById('menu-serra').addEventListener('click', paginaSerra)
     document.getElementById('visualizza').addEventListener('change', gestVisualizza);
