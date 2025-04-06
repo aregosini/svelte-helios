@@ -400,11 +400,6 @@ function toggleSimula(){
         url.searchParams.delete('nosim');
     console.log('reload');
     window.location.href = url.toString();
-    /*if (pagina == 'elettro')
-        paginaElettro();
-    else
-        paginaSerra();
-    */
 }
 
 // Inizializza la pagina
