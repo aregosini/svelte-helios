@@ -264,38 +264,14 @@ function paginaElettro(){
     updateStatoPagina = updateStatoElettro;
     // nome delle variabili e descrizione nel grafico
     grafici = {
-        AIM_COND_H2O: {descr:"Conducimetro H2O",y:0.35,ymin:0,ymax:0.5},
-		AIM_H2O_temp: {descr:"Temperatura H2O in °C",y:37,ymin:0,ymax:55},
-		AIM_Press_H2: {descr:"Pressione H2",y:14,ymin:0,ymax:25},
-		AIM_Prod_Fact: {descr:"Produzione H2 in %",y:78,ymin:0,ymax:110},
-		AIM_Flow_H2_ml: {descr:"Flusso H2 in ml",y:143,ymin:0,ymax:210},
-		AIM_Cell_Current: {descr:"Corrente della cella in A",y:5.2,ymin:0,ymax:6.5},
-		AIM_Cell_Voltage: {descr:"Tensione della cella in V",y:19,ymin:0,ymax:25}	};
+        AIM_COND_H2O: {descr:"Conducimetro H2O (uS/cm)",y:0.35,ymin:0,ymax:0.5},
+		AIM_H2O_temp: {descr:"Temperatura H2O (°C)",y:37,ymin:0,ymax:55},
+		AIM_Press_H2: {descr:"Pressione H2 (Bar)",y:14,ymin:0,ymax:25},
+		AIM_Prod_Fact: {descr:"Produzione H2 (%)",y:78,ymin:0,ymax:110},
+		AIM_Flow_H2_ml: {descr:"Flusso H2 (mL/min)",y:143,ymin:0,ymax:210},
+		AIM_Cell_Current: {descr:"Corrente della cella (A)",y:5.2,ymin:0,ymax:6.5},
+		AIM_Cell_Voltage: {descr:"Tensione della cella (V)",y:19,ymin:0,ymax:25}	};
     init();
-    /*
-    const chartsContainer = document.getElementById('charts-container');
-    let wrapper = document.createElement('div');
-    wrapper.classList.add('chart-wrapper');
-    wrapper.innerHTML = `
-        <div id="status-alarm" class="status-container hidden">
-            <div id="status-dot-alarm" class="status-dot"></div>
-            <span id="status-text-alarm" class="status-text">Alarms</span>
-        </div>`;
-    chartsContainer.appendChild(wrapper);
-    let statusDot = document.getElementById('status-dot-alarm');
-    statusDot.style.backgroundColor = "green";
-
-    wrapper = document.createElement('div');
-    wrapper.classList.add('chart-wrapper');
-    wrapper.innerHTML = `
-        <div id="status-warning" class="status-container hidden">
-            <div id="status-dot-warning" class="status-dot"></div>
-            <span id="status-text-warning" class="status-text">Warnings</span>
-        </div>`;
-    chartsContainer.appendChild(wrapper);
-    statusDot = document.getElementById('status-dot-warning');
-    statusDot.style.backgroundColor = "green";
-    */
 }
 
 function paginaSerra(){
@@ -315,17 +291,17 @@ function paginaSerra(){
             temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:22},
             pH1: {descr:"PH",y:4.4,ymin:0,ymax:8,label:'PH 1'},
             pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:8},
-            conducimetro1: {descr:"Conducimetro",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
+            conducimetro1: {descr:"Conducibilità",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
             conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'cond. 2',y:1770,ymin:0,ymax:3500}
         };
     else
         grafici = {
-            temperatura1: {descr:"Temperatura 1 in °C",y:17.3,ymin:5,ymax:25},
-            temperatura2: {descr:"Temperatura 2 in °C",y:16.8,ymin:5,ymax:22},
+            temperatura1: {descr:"Temperatura 1 (°C)",y:17.3,ymin:5,ymax:25},
+            temperatura2: {descr:"Temperatura 2 (°C)",y:16.8,ymin:5,ymax:22},
             pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
             pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
-            conducimetro1: {descr:"Conducimetro 1",y:1800,ymin:0,ymax:3500},
-            conducimetro2: {descr:"Conducimetro 2",y:1770,ymin:0,ymax:3500}
+            conducimetro1: {descr:"Conducibilità 1 (uS)",y:1800,ymin:0,ymax:3500},
+            conducimetro2: {descr:"Conducibilità 2 (uS)",y:1770,ymin:0,ymax:3500}
         };
     init();
 }
