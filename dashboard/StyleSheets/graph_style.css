@@ -173,12 +173,20 @@ mynav {
 /*****************
 stato elettrolizzatore e serra
 ****************/
+.status-flags{
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+  width: 100%;
+  margin-left: 20px;
+}
+
 .status-container {
  display: flex;
  font-size: 18px;
  margin-left: 0; /* Allinea il contenitore a sinistra */
  margin-bottom: 10px;
- width: 95%; /* Imposta una larghezza se necessario */
+ 
 }
 
 .status-text {

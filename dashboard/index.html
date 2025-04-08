@@ -50,11 +50,20 @@
             </mynav>
 
             <div id="titolo-pagina">Elettrolizzatore</div>
-            <div id="status-container" class="status-container">
-                <div id="status-dot" class="status-dot"></div>
-                <span id="status-text" class="status-text"></span>
+            <div class="status-flags">
+              <div id="status-container" class="status-container">
+                  <div id="status-dot" class="status-dot"></div>
+                  <span id="status-text" class="status-text"></span>
+              </div>
+              <div id="status-alarm" class="status-container hidden">
+                <div id="status-dot-alarm" class="status-dot"></div>
+                <span id="status-text-alarm" class="status-text">Allarme non attivo</span>
+              </div>
+              <div id="status-warning" class="status-container hidden">
+                <div id="status-dot-warning" class="status-dot"></div>
+                <span id="status-text-warning" class="status-text">Warnings non attivo</span>
+              </div>
             </div>
-        
             <div class="charts-container" id="charts-container">
                 <!-- Qui verranno inseriti i grafici -->
             </div>

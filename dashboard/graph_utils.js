@@ -1,6 +1,6 @@
 const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateData = true; // simuliamo i dati?
+let simulateData = false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -9,6 +9,8 @@ let grafici={}; //usato per nomi variabili e grafici
 let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzatore e dei sensori della serra
 let oneChart = true; // temp, ph e conducimetro rispettivamente nello stesso grafico?
 let scalaGraficiAutomatica = false;
+let allarme = new Audio('alarm.mp3');  // file per l'allarme
+allarme.loop = true;
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
@@ -180,16 +182,57 @@ async function updateCharts(second=timeLaps) {
     }
     else ping_elettro = 0;
 
-    const statusDot = document.getElementById("status-dot");
-    const statusText = document.getElementById("status-text");
-
+    if ('IB_Alarms' in data ) {
+        // prendo solo il valore dell'ultima riga (la più recente)
+        const lastObject = data.IB_Alarms[data.IB_Alarms.length - 1];
+        alarms = lastObject.value;
+    }
+    else alarms = 0;
+    console.log(data.IB_Alarms);
+    if ('IB_Warnings' in data ) {
+        // prendo solo il valore dell'ultima riga (la più recente)
+        const lastObject = data.IB_Warnings[data.IB_Warnings.length - 1];
+        warnings = lastObject.value;
+    }
+    else warnings = 0;
+    
+    console.log(alarms,warnings);
+    // emette il suono dell'allarme
+    if (alarms==1 || warnings==1){
+        allarme.play();
+    }
+    else {
+        allarme.pause();
+        allarme.currentTime = 0;
+    }
+    statusDot = document.getElementById("status-dot");
+    statusText = document.getElementById("status-text");
     // Determina il colore del pallino
-    const dotColor = ping_elettro == 1 ? "green" : "red";
+    dotColor = ping_elettro == 1 ? "green" : "red";
     statusDot.style.backgroundColor = dotColor;
-
     // Determina il testo dello stato
-    const textStatus = ping_elettro == 1 ? "" : "non ";
+    textStatus = ping_elettro == 1 ? "" : "non ";
     statusText.textContent = `Elettrolizzatore ${textStatus}attivo`;
+
+    // stato alarm
+    statusDot = document.getElementById('status-dot-alarm');
+    statusText = document.getElementById("status-text-alarm");
+    // Determina il colore del pallino
+    dotColor = alarms == 0 ? "green" : "red";
+    statusDot.style.backgroundColor = dotColor;
+    // Determina il testo dello stato
+    textStatus = alarms == 1 ? "" : "non ";
+    statusText.textContent = `Allarme ${textStatus}attivo`;
+
+    // warnings
+    statusDot = document.getElementById('status-dot-warning');
+    statusText = document.getElementById("status-text-warning");
+    // Determina il colore del pallino
+    dotColor = warnings == 0 ? "green" : "red";
+    statusDot.style.backgroundColor = dotColor;
+    // Determina il testo dello stato
+    textStatus = warnings == 1 ? "" : "non ";
+    statusText.textContent = `Warning ${textStatus}attivo`;
 }
 
 function updateStatoSerra(data) {
@@ -214,25 +257,27 @@ function paginaElettro(){
     if (pagina == 'elettro')
         return; // siamo già in paginaSerra
     pagina = 'elettro'
-    //document.getElementById('status-container').classList.remove('hidden');
+    // visualizziamo lo stato degli allarmi e worning    
+    document.getElementById('status-alarm').classList.remove('hidden');
+    document.getElementById('status-warning').classList.remove('hidden');
     document.getElementById('titolo-pagina').innerText='Elettrolizzatore';
     updateStatoPagina = updateStatoElettro;
     // nome delle variabili e descrizione nel grafico
     grafici = {
-		AIM_COND_H2O: {descr:"Conducimetro H2O",y:0.35,ymin:0,ymax:0.5},
+        AIM_COND_H2O: {descr:"Conducimetro H2O",y:0.35,ymin:0,ymax:0.5},
 		AIM_H2O_temp: {descr:"Temperatura H2O in °C",y:37,ymin:0,ymax:55},
 		AIM_Press_H2: {descr:"Pressione H2",y:14,ymin:0,ymax:25},
-		AIM_Prod_Fact: {descr:"Produzione H2 in %",y:78,ymin:0,ymax:100},
-		AIM_Flow_H2_ml: {descr:"Flusso H2 in ml",y:143,ymin:0,ymax:200},
+		AIM_Prod_Fact: {descr:"Produzione H2 in %",y:78,ymin:0,ymax:110},
+		AIM_Flow_H2_ml: {descr:"Flusso H2 in ml",y:143,ymin:0,ymax:210},
 		AIM_Cell_Current: {descr:"Corrente della cella in A",y:5.2,ymin:0,ymax:6.5},
-		AIM_Cell_Voltage: {descr:"Tensione della cella in V",y:19,ymin:0,ymax:25}
-	};
+		AIM_Cell_Voltage: {descr:"Tensione della cella in V",y:19,ymin:0,ymax:25}	};
     init();
+    /*
     const chartsContainer = document.getElementById('charts-container');
     let wrapper = document.createElement('div');
     wrapper.classList.add('chart-wrapper');
     wrapper.innerHTML = `
-        <div id="status-alarm" class="status-container">
+        <div id="status-alarm" class="status-container hidden">
             <div id="status-dot-alarm" class="status-dot"></div>
             <span id="status-text-alarm" class="status-text">Alarms</span>
         </div>`;
@@ -243,13 +288,14 @@ function paginaElettro(){
     wrapper = document.createElement('div');
     wrapper.classList.add('chart-wrapper');
     wrapper.innerHTML = `
-        <div id="status-alarm" class="status-container">
+        <div id="status-warning" class="status-container hidden">
             <div id="status-dot-warning" class="status-dot"></div>
             <span id="status-text-warning" class="status-text">Warnings</span>
         </div>`;
     chartsContainer.appendChild(wrapper);
     statusDot = document.getElementById('status-dot-warning');
     statusDot.style.backgroundColor = "green";
+    */
 }
 
 function paginaSerra(){
@@ -257,7 +303,10 @@ function paginaSerra(){
     if (pagina == 'serra')
         return; // siamo già in paginaSerra
     pagina = 'serra';
-    //document.getElementById('status-container').classList.add('hidden');
+    // nasconde warnings e alarms
+    document.getElementById('status-alarm').classList.add('hidden');;
+    document.getElementById('status-warning').classList.add('hidden');;
+
     document.getElementById('titolo-pagina').innerText='Serra idroponica';
     updateStatoPagina = updateStatoSerra;
     if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro
@@ -392,6 +441,15 @@ function gestScalaGrafici(){
 }
 
 function toggleSimula(){
+    if (allarme.paused)
+        allarme.play();
+    else {
+        allarme.pause();
+        allarme.currentTime = 0;
+    }
+    return;
+
+    /*
     simulateData = !simulateData;
     const url = new URL(window.location.href);
     if (!simulateData)
@@ -400,6 +458,7 @@ function toggleSimula(){
         url.searchParams.delete('nosim');
     console.log('reload');
     window.location.href = url.toString();
+    */
 }
 
 // Inizializza la pagina
