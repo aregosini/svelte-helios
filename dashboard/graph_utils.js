@@ -1,6 +1,6 @@
 const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateData = false; // simuliamo i dati?
+let simulateData = true; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -10,7 +10,6 @@ let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzator
 let oneChart = true; // temp, ph e conducimetro rispettivamente nello stesso grafico?
 let scalaGraficiAutomatica = false;
 let allarme = new Audio('alarm.mp3');  // file per l'allarme
-allarme.loop = true;
 
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
@@ -62,51 +61,88 @@ async function fetchData(second=timeLaps) {
     }
 }
 
-function doChart(nome,opt){
+function doChart(nome, opt) {
     const ctx = document.getElementById(`chart-${nome}`);
-    if (opt.label === undefined)
-        opt.label="";
-    if (opt.dataset === undefined)
-        opt.dataset=0;
+    if (opt.label === undefined) opt.label = "";
+    if (opt.dataset === undefined) opt.dataset = 0;
 
-    const optChart = {		  
+    const optChart = {
         type: 'line',
         data: {
-        //labels: [],
-        //labels:[1,2,3,4,5,6,7,8,10], 
-        datasets: [{ 
-            //data: generateRandomData(),
-            data: [],
-            label: opt.label,
-            borderColor: `#${Math.floor(Math.random()*16777215).toString(16)}`,
-            fill: false
+            datasets: [{
+                data: [],
+                label: opt.label,
+                borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color
+                backgroundColor: 'rgba(0, 123, 255, 0.1)', // Light fill color
+                borderWidth: 2, // Thicker line
+                pointRadius: 3, // Larger points
+                pointBackgroundColor: '#007bff', // Blue points
+                fill: true // Fill under the line
             }]
         },
         options: {
             plugins: {
                 title: {
                     display: true,
-                    text: opt.descr
+                    text: opt.descr,
+                    font: {
+                        size: 16,
+                        weight: 'bold',
+                        family: 'Arial, sans-serif'
+                    },
+                    color: '#333' // Darker title color
                 },
                 legend: {
-                    //align:'start',
-                    labels:{
+                    display: true, // Show legend
+                    labels: {
                         usePointStyle: true,
-                        pointStyle : 'rect'
-                    },
-                    display: false // Disabilita la visualizzazione della legenda
-
+                        pointStyle: 'circle',
+                        font: {
+                            size: 12
+                        },
+                        color: '#555' // Subtle legend color
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    bodyColor: '#fff', // White text
+                    borderColor: '#007bff', // Blue border
+                    borderWidth: 1
                 }
             },
             responsive: true,
-            maintainAspectRatio: false,  // Permette di fare in modo che il canvas possa adattarsi alla dimensione del contenitore
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Subtle grid lines
+                    },
+                    ticks: {
+                        color: '#555', // Subtle tick color
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Subtle grid lines
+                    },
+                    ticks: {
+                        color: '#555', // Subtle tick color
+                        font: {
+                            size: 12
+                        }
+                    },
+                    min: opt.ymin || 0,
+                    max: opt.ymax || 100
+                }
+            }
         }
     };
-    if ('ymin' in opt){
-        optChart.options.scales = {
-            y: { min: opt.ymin, max: opt.ymax}
-        }
-    }
+
     const chart = new Chart(ctx, optChart);
     return chart;
 }
@@ -150,7 +186,7 @@ async function updateCharts(second=timeLaps) {
         // no adjData perché lo fa già lo script php sul server
         data = await fetchData(second); // Ottieni i nuovi dati ogni second
     updateStatoPagina(data);
-    //console.log(data);
+    console.log(data);
     Object.keys(grafici).forEach((nome) => {
         if (nome in data) {
             const chart = grafici[nome].chart;
@@ -205,6 +241,7 @@ async function updateCharts(second=timeLaps) {
         allarme.pause();
         allarme.currentTime = 0;
     }
+         
     statusDot = document.getElementById("status-dot");
     statusText = document.getElementById("status-text");
     // Determina il colore del pallino
@@ -252,58 +289,88 @@ function updateStatoSerra(data) {
     statusText.textContent = `Sensori serra ${textStatus}attivi`;
 }
 
-function paginaElettro(){
+function paginaElettro() {
     toggleMenu();
-    if (pagina == 'elettro')
-        return; // siamo già in paginaSerra
-    pagina = 'elettro'
-    // visualizziamo lo stato degli allarmi e worning    
-    document.getElementById('status-alarm').classList.remove('hidden');
-    document.getElementById('status-warning').classList.remove('hidden');
-    document.getElementById('titolo-pagina').innerText='Elettrolizzatore';
+    if (pagina == 'elettro') return; // Already on the Elettrolizzatore page
+    pagina = 'elettro';
+    document.getElementById('titolo-pagina').innerText = 'Elettrolizzatore';
     updateStatoPagina = updateStatoElettro;
-    // nome delle variabili e descrizione nel grafico
+
+    // Define the variables and descriptions for the charts
     grafici = {
         AIM_COND_H2O: {descr:"Conducimetro H2O (uS/cm)",y:0.35,ymin:0,ymax:0.5},
-		AIM_H2O_temp: {descr:"Temperatura H2O (°C)",y:37,ymin:0,ymax:55},
-		AIM_Press_H2: {descr:"Pressione H2 (Bar)",y:14,ymin:0,ymax:25},
-		AIM_Prod_Fact: {descr:"Produzione H2 (%)",y:78,ymin:0,ymax:110},
-		AIM_Flow_H2_ml: {descr:"Flusso H2 (mL/min)",y:143,ymin:0,ymax:210},
-		AIM_Cell_Current: {descr:"Corrente della cella (A)",y:5.2,ymin:0,ymax:6.5},
-		AIM_Cell_Voltage: {descr:"Tensione della cella (V)",y:19,ymin:0,ymax:25}	};
+        AIM_H2O_temp: {descr:"Temperatura H2O (°C)",y:37,ymin:0,ymax:55},
+        AIM_Press_H2: {descr:"Pressione H2 (Bar)",y:14,ymin:0,ymax:25},
+        AIM_Prod_Fact: {descr:"Produzione H2 (%)",y:78,ymin:0,ymax:110},
+        AIM_Flow_H2_ml: {descr:"Flusso H2 (mL/min)",y:143,ymin:0,ymax:210},
+        AIM_Cell_Current: {descr:"Corrente della cella (A)",y:5.2,ymin:0,ymax:6.5},
+        AIM_Cell_Voltage: {descr:"Tensione della cella (V)",y:19,ymin:0,ymax:25}
+    };
+
     init();
+
+    const chartsContainer = document.getElementById('status-flags');
+    chartsContainer.innerHTML = ''; // Clear any existing content
+    const wrapper2 = document.createElement('div');
+    wrapper2.innerHTML = `
+        <div class="status-container">
+            <div class="status-item">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text" class="status-text">Elettrolizzatore attivo</span>
+            </div>
+            <div class="status-item">
+                <div id="status-dot-alarm" class="status-dot"></div>
+                <span id="status-text-alarm" class="status-text">Alarms</span>
+            </div>
+            <div class="status-item">
+                <div id="status-dot-warning" class="status-dot"></div>
+                <span id="status-text-warning" class="status-text">Warnings</span>
+            </div>
+        </div>`;
+    chartsContainer.appendChild(wrapper2);
+
+    
 }
 
-function paginaSerra(){
+function paginaSerra() {
+    const statusContainer1 = document.getElementById('status-flags');
+    statusContainer1.innerHTML = ''; // Clear any existing content
     toggleMenu();
-    if (pagina == 'serra')
-        return; // siamo già in paginaSerra
+    if (pagina === 'serra') return; // Already on the Serra page
     pagina = 'serra';
-    // nasconde warnings e alarms
-    document.getElementById('status-alarm').classList.add('hidden');;
-    document.getElementById('status-warning').classList.add('hidden');;
-
-    document.getElementById('titolo-pagina').innerText='Serra idroponica';
+    document.getElementById('titolo-pagina').innerText = 'Serra idroponica';
     updateStatoPagina = updateStatoSerra;
+
     if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro
         grafici = {
             temperatura1: {descr:"Temperatura in °C",y:17.3,ymin:5,ymax:25,label:'temp. 1'},
             temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:22},
             pH1: {descr:"PH",y:4.4,ymin:0,ymax:8,label:'PH 1'},
             pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:8},
-            conducimetro1: {descr:"Conducibilità",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
+            conducimetro1: {descr:"Conducimetro",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
             conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'cond. 2',y:1770,ymin:0,ymax:3500}
         };
     else
         grafici = {
-            temperatura1: {descr:"Temperatura 1 (°C)",y:17.3,ymin:5,ymax:25},
-            temperatura2: {descr:"Temperatura 2 (°C)",y:16.8,ymin:5,ymax:22},
+            temperatura1: {descr:"Temperatura 1 in °C",y:17.3,ymin:5,ymax:25},
+            temperatura2: {descr:"Temperatura 2 in °C",y:16.8,ymin:5,ymax:22},
             pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
             pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
-            conducimetro1: {descr:"Conducibilità 1 (uS)",y:1800,ymin:0,ymax:3500},
-            conducimetro2: {descr:"Conducibilità 2 (uS)",y:1770,ymin:0,ymax:3500}
+            conducimetro1: {descr:"Conducimetro 1",y:1800,ymin:0,ymax:3500},
+            conducimetro2: {descr:"Conducimetro 2",y:1770,ymin:0,ymax:3500}
         };
     init();
+
+    const wrapper1 = document.createElement('div');
+    wrapper1.innerHTML = `
+        <div class="status-container">
+            <div class="status-item">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text" class="status-text">Sensori serra attivi</span>
+            </div>
+        </div>`;
+    statusContainer1.appendChild(wrapper1);
+    
 }
 
 // Funzione principale che gestisce l'inizializzazione

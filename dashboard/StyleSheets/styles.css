@@ -32,3 +32,60 @@ html {
     overflow-y: auto; /* Allow vertical scrolling */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }
+
+.chart-wrapper {
+    width: 100%; /* Full width for smaller screens */
+    height: 400px; /* Set a fixed height for the graph */
+    max-width: 1200px; /* Optional: Limit the maximum width */
+    margin: 0 auto; /* Center the graph */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent overflow issues */
+}
+
+.hidden {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mynavbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chart-wrapper {
+        width: 100%; /* Full width for smaller screens */
+        height: 300px; /* Adjust height for smaller screens */
+    }
+
+    .status-container {
+        flex-direction: column; /* Stack items vertically */
+        gap: 10px;
+    }
+
+    .status-item {
+        width: 100%; /* Full width for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    #titolo-pagina {
+        font-size: 1.5em; /* Smaller title for small screens */
+        text-align: center;
+    }
+    
+    .chart-wrapper {
+        width: 100%; /* Full width for smaller screens */
+        height: 200px; /* Further adjust height for very small screens */
+    }
+
+    .status-container {
+        font-size: 14px;
+    }
+
+    .status-item {
+        font-size: 12px;
+    }
+}
