@@ -1,3 +1,4 @@
+/* General container styling */
 #first-container {
     width: calc(100% - 100px); /* Same as .text-container's left and right margins */
     max-width: 133.33vh; /* Match the max-width of other elements if needed */
@@ -7,6 +8,10 @@
     background-color: #0c7a0e !important;
     border-radius: 1.33vh;
     color: white;
+    margin: 0 auto; /* Center align */
+}
+.text-center {
+    text-align: center;
     margin: 0 auto; /* Center align */
 }
 
@@ -23,20 +28,30 @@
     margin: 0 auto; /* Center align */
 }
 
+.text-container:hover, #first-container:hover {
+    transform: translateY(-0.5vh); /* Subtle hover effect */
+    box-shadow: 0 1.07vh 2.14vh rgba(0, 0, 0, 0.2);
+}
+
 .highlight {
     border-color: #40d42c;
     box-shadow: 0 1.07vh 2.14vh rgba(49, 49, 49, 0.5);
 }
 
+/* Typography */
 .text-container h1, .text-container h2 {
-    color: #40d42c;
+    color: #2c7a2c; /* Darker green for headings */
     text-align: center;
+    font-family: 'Roboto', sans-serif; /* Professional font */
+    font-weight: 700;
+    margin-bottom: 1.33vh;
 }
 
 .text-container p, .text-container ul {
     color: #333;
-    font-size: 1.1rem;
-    line-height: 1.6;
+    font-size: 1.2rem; /* Slightly larger font for readability */
+    line-height: 1.8;
+    font-family: 'Open Sans', sans-serif; /* Clean and modern font */
 }
 
 .text-container img {
@@ -46,8 +61,10 @@
     max-width: 100%;
     height: auto; /* Maintain aspect ratio */
     border-radius: 1.33vh; /* Round the corners */
+    box-shadow: 0 0.53vh 1.07vh rgba(0, 0, 0, 0.1); /* Add shadow for better focus */
 }
 
+/* Image layout */
 .text-container .image-column {
     display: flex;
     flex-direction: column;
@@ -57,15 +74,21 @@
 .text-container .image-row {
     display: flex;
     gap: 20px;
-    justify-content: flex-end; /* Align the image on the right */
+    justify-content: center; /* Center-align images for balance */
 }
 
 .image-row img {
     flex: 1;
-    width: 45%; /* Make the images a little bit smaller */
-    height: 250px; /* Set a fixed height to make images taller */
-    object-fit: contain; /* Ensure the image is fully visible */
+    width: 40%; /* Slightly smaller images for a cleaner layout */
+    height: auto; /* Set a fixed height to make images taller */
+    object-fit: cover; /* Ensure images fill their space */
     border-radius: 1.33vh; /* Round the corners */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.image-row img:hover {
+    transform: scale(1.05); /* Subtle zoom effect on hover */
+    box-shadow: 0 0.8vh 1.6vh rgba(0, 0, 0, 0.2);
 }
 
 body {
@@ -74,21 +97,48 @@ body {
     box-sizing: border-box;
 }
 
+/* Cards styling */
 .cards-container {
     margin-top: 50px;
     display: flex;
     justify-content: center; /* Center the cards horizontally */
     flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    gap: 2.67vh;
     margin: 0 auto; /* Center align */
 }
-
+.box-fuori {
+    padding: 40px;
+    border-radius: 24px;
+    background-color: #ffffff;
+    margin: 50px;
+    margin-top: 40px !important;
+}
 .big-card-box, .card {
     margin: 50px !important;
     border-radius: 1.33vh;
     box-shadow: 0 0.53vh 1.07vh rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     overflow: hidden;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.big-card-text-container {
+    padding-bottom: 2.67vh;
+    flex: 1;
+    text-align: left;
+}
+
+.big-card-text, .card-text {
+    line-height: 1.6;
+    color: #555;
+}
+
+.big-card-text {
+    margin-top: 1.33vh;
+    margin-left: 2vh;
+}
+.big-card-box:hover, .card:hover {
+    transform: translateY(-0.5vh);
+    box-shadow: 0 1.07vh 2.14vh rgba(0, 0, 0, 0.2);
 }
 
 .big-card-box {
@@ -116,8 +166,14 @@ body {
     height: auto;
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     box-sizing: border-box;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.big-card-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.8vh 1.6vh rgba(0, 0, 0, 0.2);
 }
 
 .big-card-text-container {
@@ -130,7 +186,12 @@ body {
 .big-card-title-ahh, .card-title {
     font-weight: bold;
     color: #333;
+    font-size: 1.5rem;
     transition: color 0.2s ease-in-out;
+}
+
+.big-card-title-ahh:hover, .card-title:hover {
+    color: #0b6a0d; /* Highlight on hover */
 }
 
 .big-card-title-ahh {
@@ -138,8 +199,8 @@ body {
 }
 
 .big-card-text, .card-text {
-    font-size: 2.5vh;
-    line-height: 1.6;
+    font-size: 1.2rem;
+    line-height: 1.8;
     color: #555;
 }
 
@@ -180,6 +241,7 @@ body {
     font-size: 2vh;
 }
 
+/* Responsive adjustments */
 @media (max-width: 992px) {
 
     .text-container .image-row {
@@ -202,22 +264,18 @@ body {
     }
 
     .big-card-img {
-        width: 40%;
+        width: 100%;
         height: auto; /* Ensure the image is not vertically cut */
         min-width: 200px !important; /* Minimum height for images on mobile */
     }
 
-    .big-card-text-container {
-        text-align: center;
-    }
-
     .big-card-title-ahh {
-        font-size: 3vh;
+        font-size: 1.8rem;
     }
 
     .big-card-text {
-        font-size: 2vh;
-        text-align: left;
+        font-size: 1rem;
+        text-align: center;
     }
 
     .card-container {

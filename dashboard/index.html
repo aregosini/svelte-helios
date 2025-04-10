@@ -21,8 +21,38 @@
 
     <!-- Includiamo il content della DASHBOARD -->
     <div id="first-container">
-      <h1 class="text-center">Grafici</h1>
+      <h2 class="text-center">Grafici</h2>
     </div>
+    <div class="box-fuori">
+      <div class="big-card">
+        <p class="big-card-text">
+          Benvenuti nella sezione Dashboard del progetto H.ε.L.I.O.S., il cuore pulsante del nostro sistema di monitoraggio. 
+          Qui potete esplorare i dati raccolti in tempo reale dalla nostra infrastruttura IoT, 
+          che rendono possibile la gestione della serra idroponica e testimoniano il nostro impegno per la sostenibilità.
+        </p>
+        <h1 class="big-card-title">Cosa potete osservare:</h1>
+        <ul class="big-card-list">
+          <li class="big-card-text">
+        <strong style="color: #3a9a03">Dati Elettrolizzatore</strong>: Le prestazioni complessive del nostro Elettrolizzatore, 
+        insieme ai volumi di idrogeno e ossigeno prodotti e immagazzinati, monitorati dai nostri sensori di precisione.
+          </li>
+          <li class="big-card-text">
+        <strong style="color: #bdc036">Parametri della Serra Idroponica</strong>: Le condizioni ambientali essenziali per le piante aromatiche, 
+        tra cui temperatura, umidità, pH della soluzione nutriente e salute delle colture.
+          </li>
+        </ul>
+        <p class="big-card-text">
+          I dati, raccolti dai sensori distribuiti nel sistema e inviati al cloud, offrono una visione trasparente e dettagliata del funzionamento del progetto. 
+          La Dashboard è pensata per studenti, insegnanti, partner e curiosi: un’interfaccia intuitiva che permette di navigare tra grafici interattivi, 
+          analizzare tendenze e comprendere come le tecnologie rinnovabili possano plasmare un futuro più verde.
+        </p>
+      </div>
+
+         
+         
+    
+    </div>
+
         <dashboard>
             <mynav>
                 <div class="mynavbar" id="mynavbar">
@@ -50,20 +80,11 @@
             </mynav>
 
             <div id="titolo-pagina">Elettrolizzatore</div>
-            <div class="status-flags">
-              <div id="status-container" class="status-container">
-                  <div id="status-dot" class="status-dot"></div>
-                  <span id="status-text" class="status-text"></span>
-              </div>
-              <div id="status-alarm" class="status-container hidden">
-                <div id="status-dot-alarm" class="status-dot"></div>
-                <span id="status-text-alarm" class="status-text">Allarme non attivo</span>
-              </div>
-              <div id="status-warning" class="status-container hidden">
-                <div id="status-dot-warning" class="status-dot"></div>
-                <span id="status-text-warning" class="status-text">Warnings non attivo</span>
-              </div>
+            <div id="status-flags" class="status-flags">
+              
             </div>
+          </div>
+              
             <div class="charts-container" id="charts-container">
                 <!-- Qui verranno inseriti i grafici -->
             </div>
