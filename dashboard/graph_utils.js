@@ -62,51 +62,88 @@ async function fetchData(second=timeLaps) {
     }
 }
 
-function doChart(nome,opt){
+function doChart(nome, opt) {
     const ctx = document.getElementById(`chart-${nome}`);
-    if (opt.label === undefined)
-        opt.label="";
-    if (opt.dataset === undefined)
-        opt.dataset=0;
+    if (opt.label === undefined) opt.label = "";
+    if (opt.dataset === undefined) opt.dataset = 0;
 
-    const optChart = {		  
+    const optChart = {
         type: 'line',
         data: {
-        //labels: [],
-        //labels:[1,2,3,4,5,6,7,8,10], 
-        datasets: [{ 
-            //data: generateRandomData(),
-            data: [],
-            label: opt.label,
-            borderColor: `#${Math.floor(Math.random()*16777215).toString(16)}`,
-            fill: false
+            datasets: [{
+                data: [],
+                label: opt.label,
+                borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color
+                backgroundColor: 'rgba(0, 123, 255, 0.1)', // Light fill color
+                borderWidth: 2, // Thicker line
+                pointRadius: 3, // Larger points
+                pointBackgroundColor: '#007bff', // Blue points
+                fill: true // Fill under the line
             }]
         },
         options: {
             plugins: {
                 title: {
                     display: true,
-                    text: opt.descr
+                    text: opt.descr,
+                    font: {
+                        size: 16,
+                        weight: 'bold',
+                        family: 'Arial, sans-serif'
+                    },
+                    color: '#333' // Darker title color
                 },
                 legend: {
-                    //align:'start',
-                    labels:{
+                    display: true, // Show legend
+                    labels: {
                         usePointStyle: true,
-                        pointStyle : 'rect'
-                    },
-                    display: false // Disabilita la visualizzazione della legenda
-
+                        pointStyle: 'circle',
+                        font: {
+                            size: 12
+                        },
+                        color: '#555' // Subtle legend color
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    bodyColor: '#fff', // White text
+                    borderColor: '#007bff', // Blue border
+                    borderWidth: 1
                 }
             },
             responsive: true,
-            maintainAspectRatio: false,  // Permette di fare in modo che il canvas possa adattarsi alla dimensione del contenitore
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Subtle grid lines
+                    },
+                    ticks: {
+                        color: '#555', // Subtle tick color
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Subtle grid lines
+                    },
+                    ticks: {
+                        color: '#555', // Subtle tick color
+                        font: {
+                            size: 12
+                        }
+                    },
+                    min: opt.ymin || 0,
+                    max: opt.ymax || 100
+                }
+            }
         }
     };
-    if ('ymin' in opt){
-        optChart.options.scales = {
-            y: { min: opt.ymin, max: opt.ymax}
-        }
-    }
+
     const chart = new Chart(ctx, optChart);
     return chart;
 }
