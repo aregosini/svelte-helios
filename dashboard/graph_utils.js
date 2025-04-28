@@ -215,11 +215,13 @@ async function updateCharts(second=timeLaps) {
 function generateDescription(decision) {
     if (decision == 1) {
         const chartsContainer = document.getElementById('big-card-interno');
+        chartsContainer.classList.remove("box-serra"); // Rimuovi la classe "box-serra"
+        chartsContainer.classList.add("box-elettro"); // Aggiungi la classe "box-elettro"
         chartsContainer.innerHTML = ''; // Clear any existing content
         const wrapper2 = document.createElement('div');
         wrapper2.innerHTML = `
             
-            <h2 class="text-center dove-siamo mb-4 bold">Dati raccolti dall’elettrolizzatore</h2>
+            <h1 class="text-center elettro mb-4 bold">Dati raccolti dall’elettrolizzatore</h1>
                 <p class="big-card-text text-justify">
                 Il sistema di monitoraggio fornisce informazioni  sulle prestazioni dell’elettrolizzatore,<br>
                 quali la conducibilità, la temperatura dell' acqua, pressione, flusso di idrogeno prodotto, tensione e corrente della cella P.E.M
@@ -230,9 +232,11 @@ function generateDescription(decision) {
         const chartsContainer = document.getElementById('big-card-interno');
         chartsContainer.innerHTML = ''; // Clear any existing content
         const wrapper2 = document.createElement('div');
+        chartsContainer.classList.remove("box-elettro"); // Rimuovi la classe "box-serra"
+        chartsContainer.classList.add("box-serra"); // Aggiungi la classe "box-elettro"
         wrapper2.innerHTML = `
-            <div class="big-card">
-            <h2 class="text-center dove-siamo mb-4 bold">Parametri della Serra Idroponica</h2>
+            <div class="big-card" >
+            <h1 class="text-center serra mb-4 bold">Parametri della Serra Idroponica</h1>
                 <p class="big-card-text text-justify">
                 La Dashboard fornisce una visione completa delle condizioni ambientali all'interno della serra, tra cui la temperatura, <br>
                 il pH della soluzione nutriente e la salute delle colture. Questi dati come, pH, Temperatura e conducibilità della nutritiva consentono di monitorare e ottimizzare<br>
@@ -365,7 +369,7 @@ function paginaElettro() {
     toggleMenu();
     if (pagina == 'elettro') return; // Already on the Elettrolizzatore page
     pagina = 'elettro';
-    document.getElementById('titolo-pagina').innerText = 'Elettrolizzatore';
+    document.getElementById('titolo-pagina').innerText = '';
     updateStatoPagina = updateStatoElettro;
 
     // Define the variables and descriptions for the charts
@@ -410,7 +414,7 @@ function paginaSerra() {
     toggleMenu();
     if (pagina === 'serra') return; // Already on the Serra page
     pagina = 'serra';
-    document.getElementById('titolo-pagina').innerText = 'Serra idroponica';
+    document.getElementById('titolo-pagina').innerText = '';
     updateStatoPagina = updateStatoSerra;
 
     if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro

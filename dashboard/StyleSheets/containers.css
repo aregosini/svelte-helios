@@ -23,6 +23,18 @@
 .box-chi-siamo {
     border-inline-start: 1rem solid #3c7cc2;
 }
+.serra{
+    color: #0c7a0e;
+}
+.box-serra {
+    border-inline-start: 1rem solid #0c7a0e ;
+}
+.elettro{
+    color: #344e71;
+}
+.box-elettro {
+    border-inline-start: 1rem solid #344e71 ;
+}
 .text-container, #first-container {
     border: 0.13vh solid #ccc;
     padding: 2.67vh;
