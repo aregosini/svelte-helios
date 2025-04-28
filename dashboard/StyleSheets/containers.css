@@ -1,7 +1,6 @@
 /* General container styling */
 #first-container {
     width: calc(100% - 100px); /* Same as .text-container's left and right margins */
-    max-width: 133.33vh; /* Match the max-width of other elements if needed */
     margin-bottom: 40px;
     margin-top: 100px !important;
     padding: 20px;
@@ -9,12 +8,21 @@
     border-radius: 1.33vh;
     color: white;
     margin: 0 auto; /* Center align */
+    
+}
+.box-titolo {
+    border-inline-start: 1rem solid #344e71;
 }
 .text-center {
     text-align: center;
     margin: 0 auto; /* Center align */
 }
-
+.chi-siamo {
+    color: #3c7cc2;
+}
+.box-chi-siamo {
+    border-inline-start: 1rem solid #3c7cc2;
+}
 .text-container, #first-container {
     border: 0.13vh solid #ccc;
     padding: 2.67vh;
@@ -42,7 +50,7 @@
 .text-container h1, .text-container h2 {
     color: #2c7a2c; /* Darker green for headings */
     text-align: center;
-    font-family: 'Roboto', sans-serif; /* Professional font */
+    font-family: 'Poppins', sans-serif !important;
     font-weight: 700;
     margin-bottom: 1.33vh;
 }
@@ -51,7 +59,7 @@
     color: #333;
     font-size: 1.2rem; /* Slightly larger font for readability */
     line-height: 1.8;
-    font-family: 'Open Sans', sans-serif; /* Clean and modern font */
+    font-family: 'Poppins', sans-serif !important;
 }
 
 .text-container img {
@@ -113,6 +121,12 @@ body {
     margin: 50px;
     margin-top: 40px !important;
 }
+.text-container h1,
+.text-container h2 {
+    color: #40d42c;
+    text-align: center;
+}
+
 .big-card-box, .card {
     margin: 50px !important;
     border-radius: 1.33vh;

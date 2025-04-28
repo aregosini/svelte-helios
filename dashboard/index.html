@@ -21,36 +21,16 @@
 
     <!-- Includiamo il content della DASHBOARD -->
     <div id="first-container">
-      <h2 class="text-center">Grafici</h2>
+      <h1 class="text-center">Grafici</h1>
     </div>
-    <div class="box-fuori">
+    <div class="box-fuori box-chi-siamo">
       <div class="big-card">
+        <h2 class="text-center mb-4 chi-siamo bold">Dashboard</h2>
         <p class="big-card-text">
-          Benvenuti nella sezione Dashboard del progetto H.ε.L.I.O.S., il cuore pulsante del nostro sistema di monitoraggio. 
-          Qui potete esplorare i dati raccolti in tempo reale dalla nostra infrastruttura IoT, 
-          che rendono possibile la gestione della serra idroponica e testimoniano il nostro impegno per la sostenibilità.
-        </p>
-        <h1 class="big-card-title">Cosa potete osservare:</h1>
-        <ul class="big-card-list">
-          <li class="big-card-text">
-        <strong style="color: #3a9a03">Dati Elettrolizzatore</strong>: Le prestazioni complessive del nostro Elettrolizzatore, 
-        insieme ai volumi di idrogeno e ossigeno prodotti e immagazzinati, monitorati dai nostri sensori di precisione.
-          </li>
-          <li class="big-card-text">
-        <strong style="color: #bdc036">Parametri della Serra Idroponica</strong>: Le condizioni ambientali essenziali per le piante aromatiche, 
-        tra cui temperatura, umidità, pH della soluzione nutriente e salute delle colture.
-          </li>
-        </ul>
-        <p class="big-card-text">
-          I dati, raccolti dai sensori distribuiti nel sistema e inviati al cloud, offrono una visione trasparente e dettagliata del funzionamento del progetto. 
-          La Dashboard è pensata per studenti, insegnanti, partner e curiosi: un’interfaccia intuitiva che permette di navigare tra grafici interattivi, 
-          analizzare tendenze e comprendere come le tecnologie rinnovabili possano plasmare un futuro più verde.
+          La Dashboard è progettata per essere intuitiva e accessibile a tutti. 
+          Essa permette di navigare tra grafici interattivi di comprendere e visualizzare concretamente i diversi dati raccolti dall'infrastruttura IoT.
         </p>
       </div>
-
-         
-         
-    
     </div>
 
         <dashboard>
@@ -79,15 +59,20 @@
                 </div>
             </mynav>
 
-            <div id="titolo-pagina">Elettrolizzatore</div>
+            <div id="titolo-pagina"></div>
             <div id="status-flags" class="status-flags">
               
             </div>
           </div>
-              
-            <div class="charts-container" id="charts-container">
-                <!-- Qui verranno inseriti i grafici -->
+          <div >
+            <div class="big-card box-fuori box-titolo"  id="big-card-interno">
             </div>
+              <div class="charts-container" id="charts-container">
+                <!-- Qui verranno inseriti i grafici -->
+              </div>
+              
+                
+          </div>
           </dashboard>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="graph_utils.js"></script>

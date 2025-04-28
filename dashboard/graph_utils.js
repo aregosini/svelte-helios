@@ -182,9 +182,12 @@ async function updateCharts(second=timeLaps) {
         data = fetchDataSim(second);
         adjData(data); //solo se simulati. 
     }
-    else
+    else{
         // no adjData perché lo fa già lo script php sul server
         data = await fetchData(second); // Ottieni i nuovi dati ogni second
+
+    }
+        
     updateStatoPagina(data);
     console.log(data);
     Object.keys(grafici).forEach((nome) => {
@@ -205,11 +208,47 @@ async function updateCharts(second=timeLaps) {
             else
                 chart.update(); // con animazione
         }
-    });
+    });     
+}
+
+
+function generateDescription(decision) {
+    if (decision == 1) {
+        const chartsContainer = document.getElementById('big-card-interno');
+        chartsContainer.innerHTML = ''; // Clear any existing content
+        const wrapper2 = document.createElement('div');
+        wrapper2.innerHTML = `
+            
+            <h2 class="text-center dove-siamo mb-4 bold">Dati raccolti dall’elettrolizzatore</h2>
+                <p class="big-card-text text-justify">
+                Il sistema di monitoraggio fornisce informazioni  sulle prestazioni dell’elettrolizzatore,<br>
+                quali la conducibilità, la temperatura dell' acqua, pressione, flusso di idrogeno prodotto, tensione e corrente della cella P.E.M
+                </p>
+            `;
+        chartsContainer.appendChild(wrapper2);
+    }else{
+        const chartsContainer = document.getElementById('big-card-interno');
+        chartsContainer.innerHTML = ''; // Clear any existing content
+        const wrapper2 = document.createElement('div');
+        wrapper2.innerHTML = `
+            <div class="big-card">
+            <h2 class="text-center dove-siamo mb-4 bold">Parametri della Serra Idroponica</h2>
+                <p class="big-card-text text-justify">
+                La Dashboard fornisce una visione completa delle condizioni ambientali all'interno della serra, tra cui la temperatura, <br>
+                il pH della soluzione nutriente e la salute delle colture. Questi dati come, pH, Temperatura e conducibilità della nutritiva consentono di monitorare e ottimizzare<br>
+                le condizioni di crescita delle piante aromatiche coltivate per garantirne la corretta crescita.
+                </p>
+            </div>`;
+        chartsContainer.appendChild(wrapper2);
+    }
+
+
 }
 
  // Funzione per determinare il colore del pallino e il testo
  function updateStatoElettro(data) {
+    generateDescription(1);
+  
     if ('pingElettro' in data) {
         // prendo solo il valore dell'ultima riga (la più recente)
         const lastObject = data.pingElettro[data.pingElettro.length - 1];
@@ -217,6 +256,14 @@ async function updateCharts(second=timeLaps) {
         //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
     }
     else ping_elettro = 0;
+
+
+    if ('pingElettro' in data) {
+        // prendo solo il valore dell'ultima riga (la più recente)
+        const lastObject = data.pingElettro[data.pingElettro.length - 1];
+        ping_elettro = lastObject.value;
+        //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`); 
+    }
 
     if ('IB_Alarms' in data ) {
         // prendo solo il valore dell'ultima riga (la più recente)
@@ -245,8 +292,15 @@ async function updateCharts(second=timeLaps) {
     statusDot = document.getElementById("status-dot");
     statusText = document.getElementById("status-text");
     // Determina il colore del pallino
-    dotColor = ping_elettro == 1 ? "green" : "red";
-    statusDot.style.backgroundColor = dotColor;
+    if(simulateData == false) {
+        dotColor = ping_elettro == 1 ? "green" : "red";
+        statusDot.style.backgroundColor = dotColor;
+        }
+        else {
+            dotColor = ping_elettro == 1 ? "lightgreen" : "red";
+            statusDot.style.backgroundColor = dotColor;
+        }
+    
     // Determina il testo dello stato
     textStatus = ping_elettro == 1 ? "" : "non ";
     statusText.textContent = `Elettrolizzatore ${textStatus}attivo`;
@@ -255,8 +309,14 @@ async function updateCharts(second=timeLaps) {
     statusDot = document.getElementById('status-dot-alarm');
     statusText = document.getElementById("status-text-alarm");
     // Determina il colore del pallino
-    dotColor = alarms == 0 ? "green" : "red";
+    if (simulateData == false) {
+        dotColor = alarms == 1 ? "red" : "green";
+    } else {
+        dotColor = alarms == 1 ? "red" : "lightgreen";
+    }
     statusDot.style.backgroundColor = dotColor;
+
+    
     // Determina il testo dello stato
     textStatus = alarms == 1 ? "" : "non ";
     statusText.textContent = `Allarme ${textStatus}attivo`;
@@ -265,7 +325,11 @@ async function updateCharts(second=timeLaps) {
     statusDot = document.getElementById('status-dot-warning');
     statusText = document.getElementById("status-text-warning");
     // Determina il colore del pallino
-    dotColor = warnings == 0 ? "green" : "red";
+    if (simulateData == false) {
+        dotColor = warnings == 1 ? "red" : "green";
+    } else {
+        dotColor = warnings == 1 ? "red" : "lightgreen";
+    }
     statusDot.style.backgroundColor = dotColor;
     // Determina il testo dello stato
     textStatus = warnings == 1 ? "" : "non ";
@@ -273,6 +337,7 @@ async function updateCharts(second=timeLaps) {
 }
 
 function updateStatoSerra(data) {
+    generateDescription(0);
     if (Object.keys(data).length>0)
         sensoriSerra = 1
     else sensoriSerra = 0;
@@ -281,9 +346,16 @@ function updateStatoSerra(data) {
     const statusText = document.getElementById("status-text");
 
     // Determina il colore del pallino
+    if(simulateData== false) {
     const dotColor = sensoriSerra == 1 ? "green" : "red";
     statusDot.style.backgroundColor = dotColor;
+    }
+    else {
+        const dotColor = sensoriSerra == 1 ? "lightgreen" : "red";
+        statusDot.style.backgroundColor = dotColor;
 
+    }
+    
     // Determina il testo dello stato
     const textStatus = sensoriSerra == 1 ? "" : "non ";
     statusText.textContent = `Sensori serra ${textStatus}attivi`;
@@ -484,11 +556,10 @@ function gestScalaGrafici(){
 }
 
 function toggleSimula(){
-    if (allarme.paused)
-        allarme.play();
-    else {
-        allarme.pause();
-        allarme.currentTime = 0;
+    if (simulateData == true) {
+        simulateData = false;
+    } else if (simulateData == false) {
+        simulateData = true;
     }
     return;
 
