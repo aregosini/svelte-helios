@@ -327,3 +327,32 @@ body {
     align-items: center;
     margin: 0 auto; /* Center align */
 }
+
+/* Text and card adjustments for mobile */
+@media (max-width: 768px) {
+    .big-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .big-card-text {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .big-card-img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .big-card-text {
+        font-size: 0.9rem;
+    }
+
+    .big-card h1 {
+        font-size: 1.5rem;
+    }
+}

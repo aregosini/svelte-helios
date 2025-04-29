@@ -1,6 +1,8 @@
 const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
 let simulateData = true; // simuliamo i dati?
+let simulateDataElettro = true; // simuliamo i dati?
+let simulateDataSerra = false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -77,7 +79,7 @@ function doChart(nome, opt) {
                 borderWidth: 2, // Thicker line
                 pointRadius: 3, // Larger points
                 pointBackgroundColor: '#007bff', // Blue points
-                fill: true // Fill under the line
+                fill: true // Ensure the area under the line is filled
             }]
         },
         options: {
@@ -175,42 +177,76 @@ function adjData(data){
 }
 
 // Funzione per aggiornare i grafici con nuovi dati
-async function updateCharts(second=timeLaps) {
-    let data;	
+async function updateCharts(second = timeLaps) {
+    let data = {};
 
-    if (simulateData) {
-        data = fetchDataSim(second);
-        adjData(data); //solo se simulati. 
+    if (simulateDataElettro && pagina === 'elettro') {
+        data = fetchDataSimElettro(second);
+        adjData(data); // Comprimi i dati solo se simulati
+    } else if (simulateDataSerra && pagina === 'serra') {
+        data = fetchDataSimSerra(second);
+        adjData(data); // Comprimi i dati solo se simulati
+    } else {
+        // Fetch dei dati reali dal server
+        data = await fetchData(second);
     }
-    else{
-        // no adjData perché lo fa già lo script php sul server
-        data = await fetchData(second); // Ottieni i nuovi dati ogni second
 
-    }
-        
     updateStatoPagina(data);
     console.log(data);
+
     Object.keys(grafici).forEach((nome) => {
         if (nome in data) {
             const chart = grafici[nome].chart;
             const dati = data[nome];
             const ds = grafici[nome].dataset;
-            dati.forEach(
-                (riga) => {
-                    chart.data.labels.push(riga.time);
-                    chart.data.datasets[ds].data.push(riga.value);
-                }
-            );
+
+            dati.forEach((riga) => {
+                chart.data.labels.push(riga.time);
+                chart.data.datasets[ds].data.push(riga.value);
+            });
+
             chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
             chart.data.datasets[ds].data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
-            if (chart.data.labels.length >= MaxPointGraph)
-                chart.update('none'); //no animazione. non ci sta dietro!
-            else
-                chart.update(); // con animazione
+
+            if (chart.data.labels.length >= MaxPointGraph) {
+                chart.update('none'); // Aggiorna senza animazione
+            } else {
+                chart.update(); // Aggiorna con animazione
+            }
         }
-    });     
+    });
+}
+function fetchDataSimElettro(second = timeLaps) {
+    if (!simulateDataElettro || pagina !== 'elettro') {
+        return {}; // Non generare dati se la simulazione è disattivata o non siamo nella pagina Elettrolizzatore
+    }
+
+    let ret = {};
+    Object.entries(grafici).forEach(([nome, val]) => {
+        ret[nome] = [];
+        for (let i = second; i > 0; i--) {
+            ret[nome].push(genValue(val, i));
+        }
+    });
+    ret['pingElettro'] = [{ "time": genOra(), "value": 1 }];
+    return ret;
 }
 
+function fetchDataSimSerra(second = timeLaps) {
+    if (!simulateDataSerra || pagina !== 'serra') {
+        return {}; // Non generare dati se la simulazione è disattivata o non siamo nella pagina Serra
+    }
+
+    let ret = {};
+    Object.entries(grafici).forEach(([nome, val]) => {
+        ret[nome] = [];
+        for (let i = second; i > 0; i--) {
+            ret[nome].push(genValue(val, i));
+        }
+    });
+    ret['pingSerra'] = [{ "time": genOra(), "value": 1 }];
+    return ret;
+}
 
 function generateDescription(decision) {
     if (decision == 1) {
@@ -296,7 +332,7 @@ function generateDescription(decision) {
     statusDot = document.getElementById("status-dot");
     statusText = document.getElementById("status-text");
     // Determina il colore del pallino
-    if(simulateData == false) {
+    if(simulateDataElettro == false) {
         dotColor = ping_elettro == 1 ? "green" : "red";
         statusDot.style.backgroundColor = dotColor;
         }
@@ -313,7 +349,7 @@ function generateDescription(decision) {
     statusDot = document.getElementById('status-dot-alarm');
     statusText = document.getElementById("status-text-alarm");
     // Determina il colore del pallino
-    if (simulateData == false) {
+    if (simulateDataElettro == false) {
         dotColor = alarms == 1 ? "red" : "green";
     } else {
         dotColor = alarms == 1 ? "red" : "lightgreen";
@@ -329,7 +365,7 @@ function generateDescription(decision) {
     statusDot = document.getElementById('status-dot-warning');
     statusText = document.getElementById("status-text-warning");
     // Determina il colore del pallino
-    if (simulateData == false) {
+    if (simulateDataElettro == false) {
         dotColor = warnings == 1 ? "red" : "green";
     } else {
         dotColor = warnings == 1 ? "red" : "lightgreen";
@@ -350,7 +386,7 @@ function updateStatoSerra(data) {
     const statusText = document.getElementById("status-text");
 
     // Determina il colore del pallino
-    if(simulateData== false) {
+    if(simulateDataSerra== false) {
     const dotColor = sensoriSerra == 1 ? "green" : "red";
     statusDot.style.backgroundColor = dotColor;
     }
@@ -559,32 +595,44 @@ function gestScalaGrafici(){
     });
 }
 
-function toggleSimula(){
-    if (simulateData == true) {
-        simulateData = false;
-    } else if (simulateData == false) {
-        simulateData = true;
+function toggleSimula() {
+    if (pagina === 'elettro') {
+            if (simulateDataElettro == true) {
+                simulateDataElettro = false;
+            } else if (simulateDataElettro == false) {
+                simulateDataElettro = true;
+            }
+            console.log('Simulazione toggled in Elettrolizzatore');
+        } else if (pagina === 'serra') {
+            if (simulateDataSerra == true) {
+                simulateDataSerra = false;
+            } else if (simulateDataSerra == false) {
+                simulateDataSerra = true;
+            }
+            console.log('Simulazione toggled in Serra');
+        }
+    
+        return;
+    
+        /*
+        simulateData = !simulateData;
+        const url = new URL(window.location.href);
+        if (!simulateData)
+            url.searchParams.set('nosim',null);
+        else
+            url.searchParams.delete('nosim');
+        console.log('reload');
+        window.location.href = url.toString();
+        */
     }
-    return;
-
-    /*
-    simulateData = !simulateData;
-    const url = new URL(window.location.href);
-    if (!simulateData)
-        url.searchParams.set('nosim',null);
-    else
-        url.searchParams.delete('nosim');
-    console.log('reload');
-    window.location.href = url.toString();
-    */
-}
 
 // Inizializza la pagina
 window.onload = function() {
     const params = new URLSearchParams(window.location.search);
     // Controlla se esiste il parametro 'nosim' nell'URL per non simulare i dati ma prenderli dal sito del DB
     if (params.has('nosim')) {
-        simulateData = false;
+        simulateDataSerra = false;
+        simulateDataElettro = false;
         timeLaps = 2; // ogni secondo non in simulazione
     }
     if (params.has('noonechart')) {
