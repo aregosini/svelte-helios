@@ -2,7 +2,7 @@ const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
 let simulateData = true; // simuliamo i dati?
 let simulateDataElettro = true; // simuliamo i dati?
-let simulateDataSerra = false; // simuliamo i dati?
+let simulateDataSerra =true ; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -79,7 +79,7 @@ function doChart(nome, opt) {
                 borderWidth: 2, // Thicker line
                 pointRadius: 3, // Larger points
                 pointBackgroundColor: '#007bff', // Blue points
-                fill: true // Ensure the area under the line is filled
+                fill: true // Fill under the line
             }]
         },
         options: {
@@ -195,26 +195,31 @@ async function updateCharts(second = timeLaps) {
     console.log(data);
 
     Object.keys(grafici).forEach((nome) => {
-        if (nome in data) {
-            const chart = grafici[nome].chart;
-            const dati = data[nome];
-            const ds = grafici[nome].dataset;
-
-            dati.forEach((riga) => {
+        const grf  = grafici[nome];
+        const chart = grf.chart;
+        const ds    = grf.dataset || 0;
+        const dati  = data[nome];
+        
+        if (!dati) return;
+          
+            dati.forEach(riga => {
+              
+                if (ds === 0) {
                 chart.data.labels.push(riga.time);
+                }
+              
                 chart.data.datasets[ds].data.push(riga.value);
             });
-
             chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
-            chart.data.datasets[ds].data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
-
+            chart.data.datasets[ds]
+                 .data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
+          
             if (chart.data.labels.length >= MaxPointGraph) {
-                chart.update('none'); // Aggiorna senza animazione
+              chart.update('none');
             } else {
-                chart.update(); // Aggiorna con animazione
+              chart.update();
             }
-        }
-    });
+          });
 }
 function fetchDataSimElettro(second = timeLaps) {
     if (!simulateDataElettro || pagina !== 'elettro') {
@@ -551,26 +556,30 @@ function secondiDallaMezzanotte() {
     return secondi;
   }
   
-function gestVisualizza(){
+  function gestVisualizza() {
     const idx = this.selectedIndex;
-    switch(idx){
-        case 0:  // realtime ultimo minuto
+    switch (idx) {
+        case 0: // Realtime ultimo minuto
             realTime = true;
             loadNpoint = 60;
             break;
-        case 1: // ultimi 5 minuti
+        case 1: // Ultimi 5 minuti
             realTime = false;
-            loadNpoint = 60*5;
+            loadNpoint = 60 * 5;
             break;
-        case 2: // ultima ora 
+        case 2: // Ultima ora
             realTime = false;
-            loadNpoint = 60*60;
+            loadNpoint = 60 * 60;
             break;
-        case 3: // tutta la giornata
+        case 3: // Tutta la giornata
             realTime = false;
             loadNpoint = secondiDallaMezzanotte();
             break;
-    };
+        case 4: // Ultimi 7 giorni
+            realTime = false;
+            loadNpoint = 7 * 24 * 3600; // 7 giorni in secondi
+            break;
+    }
     updateCharts(loadNpoint);
 }
 
