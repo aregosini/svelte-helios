@@ -35,6 +35,9 @@
 .box-elettro {
     border-inline-start: 1rem solid #344e71 ;
 }
+
+
+
 .text-container, #first-container {
     border: 0.13vh solid #ccc;
     padding: 2.67vh;
@@ -349,7 +352,8 @@ body {
 
 @media (max-width: 480px) {
     .big-card-text {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
+        ;
     }
 
     .big-card h1 {

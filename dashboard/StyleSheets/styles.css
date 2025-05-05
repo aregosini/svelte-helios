@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
+html {
+    font-size: clamp(14px, 1.2vw, 18px);
+    overflow-x: hidden; /* già presente in styles.css :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
+    
+  }
 body {
     font-family: 'Poppins', sans-serif !important;
     margin: 0;
@@ -9,6 +13,10 @@ body {
     overflow-y: auto; /* Allow vertical scrolling */
     -ms-overflow-style: scrollbar; /* For Internet Explorer and Edge */
 }
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
@@ -16,8 +24,10 @@ body {
 }
 p {
     font-family: 'Poppins', sans-serif !important;
-    font-size: 16px;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
 }
+h1 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.25rem, 3vw, 2rem); }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'poppins', sans-serif !important;
@@ -52,110 +62,69 @@ html {
     justify-content: center;
     align-items: center;
     overflow: hidden; /* Prevent overflow issues */
+    aspect-ratio: 16/9;
+    padding: 0.5rem;
 }
+
 
 .hidden {
     display: none;
 }
 
+
+
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .mynavbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
+/* Breakpoint per dispositivi tra 768px e 992px */
+@media (max-width: 992px) {
     .chart-wrapper {
-        width: 100%; /* Full width for smaller screens */
-        height: 250px; /* Adjust height for smaller screens */
+      aspect-ratio: 4 / 3;
     }
-
-    .status-container {
-        flex-direction: column; /* Stack items vertically */
-        gap: 10px;
+    .big-card-box,
+    .card-container {
+      display: flex;
+      flex-direction: column;
     }
-
-    .status-item {
-        width: 100%; /* Full width for smaller screens */
-    }
-}
-
-/* Status flags adjustments for mobile */
-@media (max-width: 768px) {
-    .status-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .status-item {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    #titolo-pagina {
-        font-size: 1.5em; /* Smaller title for small screens */
-        text-align: center;
-    }
-    
-    .chart-wrapper {
-        width: 100%; /* Full width for smaller screens */
-        height: 200px; /* Further adjust height for very small screens */
-    }
-
-    .status-container {
-        font-size: 14px;
-    }
-
-    .status-item {
-        font-size: 12px;
-    }
-}
-
-/* Chart adjustments for mobile */
-@media (max-width: 768px) {
-    .chart-wrapper {
-        width: 100%; /* Full width for smaller screens */
-        height: 250px; /* Adjust height for smaller screens */
-    }
-}
-
-@media (max-width: 480px) {
-    .chart-wrapper {
-        height: 200px; /* Further adjust height for very small screens */
-    }
-}
-
-/* General adjustments for mobile */
-@media (max-width: 768px) {
+  }
+  
+  /* Breakpoint per dispositivi sotto i 768px */
+  @media (max-width: 768px) {
     body {
-        padding: 10px;
+      padding: 10px;
     }
-
+  
     #titolo-pagina {
-        font-size: 1.5em;
-        text-align: center;
+      font-size: 1.4em; /* Leggermente più piccolo per tablet */
+      text-align: center;
     }
-
+  
     .visualizza-container {
-        flex-direction: column;
-        align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
-
+  
     .visualizza-container select,
     .visualizza-container label {
-        width: 100%;
-        font-size: 1em;
-    }
-}
-
-@media (max-width: 480px) {
-    h1, h2, h3 {
-        font-size: 1.2em;
+      width: 100%;
+      font-size: 1em;
     }
 
+
+  }
+  
+  /* Breakpoint per dispositivi sotto i 480px */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: clamp(1.2rem, 5vw, 1.8rem);
+    }
     p {
-        font-size: 0.9em;
+      font-size: clamp(0.8rem, 3vw, 1rem);
     }
-}
+
+  
+    #titolo-pagina {
+      font-size: 1.2em; /* Riduzione del titolo */
+      text-align: center;
+    }
+  }
+  

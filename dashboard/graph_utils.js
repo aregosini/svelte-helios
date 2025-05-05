@@ -1,4 +1,4 @@
-const MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
+let MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
 let simulateData = true; // simuliamo i dati?
 let simulateDataElettro = true; // simuliamo i dati?
@@ -175,9 +175,16 @@ function adjData(data){
         //console.log(data[nome]);       
     });
 }
-
+function getViewportWidth() {
+    return window.innerWidth;
+  }
 // Funzione per aggiornare i grafici con nuovi dati
 async function updateCharts(second = timeLaps) {
+    if(getViewportWidth() < 768) {
+        MaxPointGraph = 45; // Se la larghezza dello schermo è inferiore a 768px, mostra solo 20 punti
+    } else {
+        MaxPointGraph = 60; // Altrimenti, mostra 60 punti
+    }
     let data = {};
 
     if (simulateDataElettro && pagina === 'elettro') {
@@ -269,6 +276,7 @@ function generateDescription(decision) {
                 </p>
             `;
         chartsContainer.appendChild(wrapper2);
+        generateAlarms(1); // genera gli allarmi per l'elettrolizzatore
     }else{
         const chartsContainer = document.getElementById('big-card-interno');
         chartsContainer.innerHTML = ''; // Clear any existing content
@@ -285,10 +293,49 @@ function generateDescription(decision) {
                 </p>
             </div>`;
         chartsContainer.appendChild(wrapper2);
+        generateAlarms(0); // genera gli allarmi per la serra
     }
 
 
 }
+
+function generateAlarms(data){
+    const chartsContainer = document.getElementById('status-flags');
+    chartsContainer.innerHTML = ''; // Clear any existing content
+    const wrapper2 = document.createElement('div');
+
+    if (data == 1){ //elettrolizzatore
+    wrapper2.innerHTML = `
+        <div class="status-container">
+            <div class="status-item">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text" class="status-text">Elettrolizzatore attivo</span>
+            </div>
+            <div class="status-item">
+                <div id="status-dot-alarm" class="status-dot"></div>
+                <span id="status-text-alarm" class="status-text">Alarms</span>
+            </div>
+            <div class="status-item">
+                <div id="status-dot-warning" class="status-dot"></div>
+                <span id="status-text-warning" class="status-text">Warnings</span>
+            </div>
+        </div>`;
+    chartsContainer.appendChild(wrapper2);
+
+    } else{ //serra
+        wrapper2.innerHTML = `
+        <div class="status-container">
+            <div class="status-item">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text" class="status-text">Sensori serra attivi</span>
+            </div>
+        </div>`;
+        chartsContainer.appendChild(wrapper2);
+
+    }
+}
+
+
 
  // Funzione per determinare il colore del pallino e il testo
  function updateStatoElettro(data) {
@@ -426,28 +473,13 @@ function paginaElettro() {
 
     init();
 
-    const chartsContainer = document.getElementById('status-flags');
-    chartsContainer.innerHTML = ''; // Clear any existing content
-    const wrapper2 = document.createElement('div');
-    wrapper2.innerHTML = `
-        <div class="status-container">
-            <div class="status-item">
-                <div id="status-dot" class="status-dot"></div>
-                <span id="status-text" class="status-text">Elettrolizzatore attivo</span>
-            </div>
-            <div class="status-item">
-                <div id="status-dot-alarm" class="status-dot"></div>
-                <span id="status-text-alarm" class="status-text">Alarms</span>
-            </div>
-            <div class="status-item">
-                <div id="status-dot-warning" class="status-dot"></div>
-                <span id="status-text-warning" class="status-text">Warnings</span>
-            </div>
-        </div>`;
-    chartsContainer.appendChild(wrapper2);
 
     
 }
+
+
+
+
 
 function paginaSerra() {
     const statusContainer1 = document.getElementById('status-flags');
@@ -478,15 +510,7 @@ function paginaSerra() {
         };
     init();
 
-    const wrapper1 = document.createElement('div');
-    wrapper1.innerHTML = `
-        <div class="status-container">
-            <div class="status-item">
-                <div id="status-dot" class="status-dot"></div>
-                <span id="status-text" class="status-text">Sensori serra attivi</span>
-            </div>
-        </div>`;
-    statusContainer1.appendChild(wrapper1);
+    
     
 }
 
