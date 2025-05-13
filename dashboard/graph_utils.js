@@ -520,7 +520,7 @@ function paginaSerra() {
         grafici = {
             temperatura1: {descr:"Temperatura (°C)",y:17.3,ymin:5,ymax:25,label:'temp. 1'},
             temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:22},
-            pH1: {descr:"PH",y:4.4,ymin:0,ymax:8,label:'PH 1'},
+            pH1: {descr:"PH",y:4.4,ymin:0,ymax:10,label:'PH 1'},
             pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:8},
             conducimetro1: {descr:"Conducibilità (uS)",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
             conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'cond. 2',y:1770,ymin:0,ymax:3500}
