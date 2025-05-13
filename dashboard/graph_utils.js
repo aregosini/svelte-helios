@@ -6,7 +6,6 @@ let simulateDataSerra =true ; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
-const apiUrlPing = 'https://www.heliosproject.it/sensori/get-data-ping.php';
 let pagina; // pagina 'elettro' o 'serra'
 let grafici={}; //usato per nomi variabili e grafici
 let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzatore e dei sensori della serra
@@ -51,22 +50,6 @@ function fetchDataSim(second=timeLaps) {
 async function fetchData(second=timeLaps) {
     try {
         const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
-        //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
-
-        //console.log(apiUrl+`?second=${second}`);
-        if (!response.ok) {
-            throw new Error('Errore nel recupero dei dati');
-        }
-        const data = await response.json();
-        return data;  // Assumiamo che i dati siano già nel formato corretto
-    } catch (error) {
-        console.error('Errore durante la richiesta dei dati:', error);
-        return [];  // Ritorna un oggetto vuoto in caso di errore
-    }
-}
-async function fetchPing(second=3) {
-    try {
-        const response = await fetch(apiUrlPing+`?second=${second}&pagina=${pagina}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
         //console.log(apiUrl+`?second=${second}`);
@@ -216,12 +199,6 @@ async function updateCharts(second = timeLaps) {
     } else {
         // Fetch dei dati reali dal server
         data = await fetchData(second);
-        dataPing = await fetchPing();
-        let unione = {
-            ...data,
-            ...dataPing
-        };
-        data = unione;
     }
 
     updateStatoPagina(data);
