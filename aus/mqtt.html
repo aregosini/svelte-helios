@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Publisher and Subscriber</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <h1>MQTT Publisher and Subscriber</h1>
+    <button onclick="publishMessage()">Publish Alarm: Off</button>
+    <h3>Received Messages:</h3>
+    <pre id="receivedMessages"></pre> <!-- Area per visualizzare i messaggi ricevuti -->
+
+    <script>
+        // Configurazione della connessione MQTT con TLS
+        const brokerUrl = 'wss://test.mosquitto.org:8081'; // WebSocket over TLS
+        const topicPublish = 'helios-quUtnKik12'; // Topic su cui pubblicare
+        const topicSubscribe = 'helios-quUtnKik12'; // Topic su cui sottoscriversi
+        const clientId = 'mqtt-js-client-' + Math.random().toString(16).substr(2, 8); // ID client univoco
+
+        // Crea un client MQTT
+        const client = mqtt.connect(brokerUrl, {
+            clientId: clientId,         // ID unico per il client
+            clean: true,                // Connessione pulita
+            reconnectPeriod: 1000,      // Periodo di riconnessione in caso di disconnessione
+            connectTimeout: 30000,      // Timeout di connessione
+            username: '',               // Lasciamo vuoto per test.mosquitto.org (non richiede credenziali)
+            password: '',               // Lasciamo vuoto per test.mosquitto.org (non richiede password)
+            rejectUnauthorized: false   // Disabilita la verifica del certificato del server (solo per test)
+        });
+
+        // Flag per verificare se la connessione è stata stabilita
+        let isConnected = false;
+
+        // Funzione di callback per la connessione
+        client.on('connect', function () {
+            console.log('Connesso al broker MQTT');
+            isConnected = true;  // Imposta il flag a true una volta che la connessione è stabilita
+
+            // Sottoscrivi al topic dopo la connessione
+            client.subscribe(topicSubscribe, function (err) {
+                if (!err) {
+                    console.log('Sottoscritto al topic:', topicSubscribe);
+                } else {
+                    console.error('Errore nella sottoscrizione:', err);
+                }
+            });
+        });
+
+        // Funzione di callback per la ricezione dei messaggi
+        client.on('message', function (topic, message) {
+            console.log('Messaggio ricevuto sul topic', topic, ':', message.toString());
+
+            // Mostra il messaggio ricevuto nell'area della pagina
+            const receivedMessages = document.getElementById('receivedMessages');
+            receivedMessages.textContent += `Topic: ${topic}\nMessage: ${message.toString()}\n\n`;
+        });
+
+        // Funzione di callback per la gestione degli errori
+        client.on('error', function (error) {
+            console.error('Errore nella connessione MQTT:', error);
+        });
+
+        // Funzione per pubblicare il messaggio
+        function publishMessage() {
+            if (isConnected) {
+                const message = {
+                    alarm: 'off' // Messaggio in formato JSON
+                };
+
+                // Pubblica il messaggio JSON sul topic specificato
+                client.publish(topicPublish, JSON.stringify(message), function (err) {
+                    if (!err) {
+                        console.log('Messaggio pubblicato:', message);
+                    } else {
+                        console.error('Errore nella pubblicazione:', err);
+                    }
+                });
+            } else {
+                console.log('Connessione non ancora stabilita');
+            }
+        }
+    </script>
+</body>
+</html>
