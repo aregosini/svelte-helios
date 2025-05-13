@@ -6,6 +6,7 @@ let simulateDataSerra =true ; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
+const apiUrlPing = 'https://www.heliosproject.it/sensori/get-data-ping.php';
 let pagina; // pagina 'elettro' o 'serra'
 let grafici={}; //usato per nomi variabili e grafici
 let updateStatoPagina   // funzione per aggiornare lo stato dell'elettrolizzatore e dei sensori della serra
@@ -46,9 +47,26 @@ function fetchDataSim(second=timeLaps) {
     return ret;
 }
 
+//async function fetchData(second=timeLaps) {
 async function fetchData(second=timeLaps) {
     try {
         const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
+        //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
+
+        //console.log(apiUrl+`?second=${second}`);
+        if (!response.ok) {
+            throw new Error('Errore nel recupero dei dati');
+        }
+        const data = await response.json();
+        return data;  // Assumiamo che i dati siano già nel formato corretto
+    } catch (error) {
+        console.error('Errore durante la richiesta dei dati:', error);
+        return [];  // Ritorna un oggetto vuoto in caso di errore
+    }
+}
+async function fetchPing(second=3) {
+    try {
+        const response = await fetch(apiUrlPing+`?second=${second}&pagina=${pagina}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
         //console.log(apiUrl+`?second=${second}`);
@@ -186,6 +204,8 @@ async function updateCharts(second = timeLaps) {
         MaxPointGraph = 60; // Altrimenti, mostra 60 punti
     }
     let data = {};
+    let dataPing = {};
+    
 
     if (simulateDataElettro && pagina === 'elettro') {
         data = fetchDataSimElettro(second);
@@ -196,10 +216,16 @@ async function updateCharts(second = timeLaps) {
     } else {
         // Fetch dei dati reali dal server
         data = await fetchData(second);
+        dataPing = await fetchPing();
+        let unione = {
+            ...data,
+            ...dataPing
+        };
+        data = unione;
     }
 
     updateStatoPagina(data);
-    console.log(data);
+    //console.log(data);
 
     Object.keys(grafici).forEach((nome) => {
         const grf  = grafici[nome];
@@ -345,15 +371,6 @@ function generateAlarms(data){
         // prendo solo il valore dell'ultima riga (la più recente)
         const lastObject = data.pingElettro[data.pingElettro.length - 1];
         ping_elettro = lastObject.value;
-        //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
-    }
-    else ping_elettro = 0;
-
-
-    if ('pingElettro' in data) {
-        // prendo solo il valore dell'ultima riga (la più recente)
-        const lastObject = data.pingElettro[data.pingElettro.length - 1];
-        ping_elettro = lastObject.value;
         //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`); 
     }
 
@@ -430,26 +447,35 @@ function generateAlarms(data){
 
 function updateStatoSerra(data) {
     generateDescription(0);
-    if (Object.keys(data).length>0)
-        sensoriSerra = 1
-    else sensoriSerra = 0;
 
+    //console.log('dati: '+data);
+
+    if ('pingSerra' in data) {
+        //console.log("dati pingSerra: "+data.pingSerra);
+        // prendo solo il valore dell'ultima riga (la più recente)
+        const lastObject = data.pingSerra[data.pingSerra.length - 1];
+        ping_serra = lastObject.value;
+        //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
+    }
+    else ping_serra = 0;
+
+    //console.log('ping serra'+ping_serra);
     const statusDot = document.getElementById("status-dot");
     const statusText = document.getElementById("status-text");
 
     // Determina il colore del pallino
     if(simulateDataSerra== false) {
-    const dotColor = sensoriSerra == 1 ? "green" : "red";
+    const dotColor = ping_serra == 1 ? "green" : "red";
     statusDot.style.backgroundColor = dotColor;
     }
     else {
-        const dotColor = sensoriSerra == 1 ? "lightgreen" : "red";
+        const dotColor = ping_serra == 1 ? "lightgreen" : "red";
         statusDot.style.backgroundColor = dotColor;
 
     }
     
     // Determina il testo dello stato
-    const textStatus = sensoriSerra == 1 ? "" : "non ";
+    const textStatus = ping_serra == 1 ? "" : "non ";
     statusText.textContent = `Sensori serra ${textStatus}attivi`;
 }
 
@@ -666,7 +692,7 @@ window.onload = function() {
     if (params.has('nosim')) {
         simulateDataSerra = false;
         simulateDataElettro = false;
-        timeLaps = 2; // ogni secondo non in simulazione
+        timeLaps = 1; // ogni secondo non in simulazione
     }
     if (params.has('noonechart')) {
         oneChart = false;
