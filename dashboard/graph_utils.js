@@ -1,8 +1,7 @@
 let MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateData = true; // simuliamo i dati?
-let simulateDataElettro = true; // simuliamo i dati?
-let simulateDataSerra =true ; // simuliamo i dati?
+let simulateDataElettro = false; // simuliamo i dati?
+let simulateDataSerra =false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -187,8 +186,6 @@ async function updateCharts(second = timeLaps) {
         MaxPointGraph = 60; // Altrimenti, mostra 60 punti
     }
     let data = {};
-    let dataPing = {};
-    
 
     if (simulateDataElettro && pagina === 'elettro') {
         data = fetchDataSimElettro(second);
@@ -231,6 +228,7 @@ async function updateCharts(second = timeLaps) {
             }
           });
 }
+
 function fetchDataSimElettro(second = timeLaps) {
     if (!simulateDataElettro || pagina !== 'elettro') {
         return {}; // Non generare dati se la simulazione è disattivata o non siamo nella pagina Elettrolizzatore
@@ -350,6 +348,7 @@ function generateAlarms(data){
         ping_elettro = lastObject.value;
         //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`); 
     }
+    else ping_elettro = 0;
 
     if ('IB_Alarms' in data ) {
         // prendo solo il valore dell'ultima riga (la più recente)
@@ -357,7 +356,8 @@ function generateAlarms(data){
         alarms = lastObject.value;
     }
     else alarms = 0;
-    console.log(data.IB_Alarms);
+
+    //console.log(data.IB_Alarms);
     if ('IB_Warnings' in data ) {
         // prendo solo il valore dell'ultima riga (la più recente)
         const lastObject = data.IB_Warnings[data.IB_Warnings.length - 1];
@@ -365,7 +365,7 @@ function generateAlarms(data){
     }
     else warnings = 0;
     
-    console.log(alarms,warnings);
+    console.log("alarms: ",alarms,"warnings: ",warnings);
     // emette il suono dell'allarme
     if (alarms==1 || warnings==1){
         allarme.play();
@@ -459,6 +459,7 @@ function updateStatoSerra(data) {
 function paginaElettro() {
     toggleMenu();
     if (pagina == 'elettro') return; // Already on the Elettrolizzatore page
+
     pagina = 'elettro';
     document.getElementById('titolo-pagina').innerText = '';
     updateStatoPagina = updateStatoElettro;
@@ -475,9 +476,6 @@ function paginaElettro() {
     };
 
     init();
-
-
-    
 }
 
 
@@ -485,11 +483,12 @@ function paginaElettro() {
 
 
 function paginaSerra() {
-    const statusContainer1 = document.getElementById('status-flags');
-    statusContainer1.innerHTML = ''; // Clear any existing content
     toggleMenu();
     if (pagina === 'serra') return; // Already on the Serra page
+
     pagina = 'serra';
+    const statusContainer1 = document.getElementById('status-flags');
+    statusContainer1.innerHTML = ''; // Clear any existing content
     document.getElementById('titolo-pagina').innerText = '';
     updateStatoPagina = updateStatoSerra;
 
@@ -512,9 +511,6 @@ function paginaSerra() {
             conducimetro2: {descr:"Conducibilità 2 (uS)",y:1770,ymin:0,ymax:3500}
         };
     init();
-
-    
-    
 }
 
 // Funzione principale che gestisce l'inizializzazione
@@ -551,7 +547,7 @@ function init() {
             val.chart.options.plugins.legend.display=true;
         }
     });
-    updateCharts(MaxPointGraph);
+    updateCharts(loadNpoint);
     gestScalaGrafici();
 }
 
@@ -632,34 +628,15 @@ function gestScalaGrafici(){
 }
 
 function toggleSimula() {
-    if (pagina === 'elettro') {
-            if (simulateDataElettro == true) {
-                simulateDataElettro = false;
-            } else if (simulateDataElettro == false) {
-                simulateDataElettro = true;
-            }
+    if (pagina === 'elettro') {            
+            simulateDataElettro = !simulateDataElettro;
             console.log('Simulazione toggled in Elettrolizzatore');
         } else if (pagina === 'serra') {
-            if (simulateDataSerra == true) {
-                simulateDataSerra = false;
-            } else if (simulateDataSerra == false) {
-                simulateDataSerra = true;
-            }
+            simulateDataSerra = !simulateDataSerra;
             console.log('Simulazione toggled in Serra');
         }
-    
+        init();
         return;
-    
-        /*
-        simulateData = !simulateData;
-        const url = new URL(window.location.href);
-        if (!simulateData)
-            url.searchParams.set('nosim',null);
-        else
-            url.searchParams.delete('nosim');
-        console.log('reload');
-        window.location.href = url.toString();
-        */
     }
 
 // Inizializza la pagina
@@ -690,8 +667,10 @@ window.onload = function() {
     else paginaElettro();
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
-        if (realTime) // se in realTime, aggiorniamo i grafici
+        if (realTime) {// se in realTime, aggiorniamo i grafici
             updateCharts(); // Aggiorna i grafici
+            console.log ('Timer...');
+        }
     }, timeLaps * 1000);
   
 }
