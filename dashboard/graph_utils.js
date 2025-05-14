@@ -12,6 +12,11 @@ let oneChart = true; // temp, ph e conducimetro rispettivamente nello stesso gra
 let scalaGraficiAutomatica = false;
 let allarme = new Audio('alarm.mp3');  // file per l'allarme
 
+// dimensioni dei pallini nei grafici
+let borderWidth = 1; // Thicker line
+let pointRadius = 2; // Larger points
+
+
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
     const now = new Date();
@@ -76,8 +81,8 @@ function doChart(nome, opt) {
                 label: opt.label,
                 borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color
                 backgroundColor: 'rgba(0, 123, 255, 0.1)', // Light fill color
-                borderWidth: 2, // Thicker line
-                pointRadius: 3, // Larger points
+                borderWidth: borderWidth, // Thicker line
+                pointRadius: pointRadius, // Larger points
                 pointBackgroundColor: '#007bff', // Blue points
                 fill: true // Fill under the line
             }]
@@ -580,8 +585,12 @@ function init() {
                 data: [],
                 label: val.label,
                 borderColor: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+                borderWidth: borderWidth, // Thicker line
+                pointRadius: pointRadius, // Larger points
+                
                 fill: false
             }
+
             // fa vedere le label delle serie
             val.chart.options.plugins.legend.display=true;
         }
