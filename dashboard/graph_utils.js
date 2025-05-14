@@ -578,6 +578,7 @@ function init() {
             chartWrapper.innerHTML = `<canvas id="chart-${nome}" width="300" height="250"></canvas>`;
             chartsContainer.appendChild(chartWrapper);
             val.chart = doChart(nome,val);
+            val.chart.options.plugins.legend.display=false; // se solo una serie, no label
         }
         else {  // lo mettiamo nello stesso grafico già creato
             val.chart = grafici[val.inGrafico].chart; 
@@ -590,7 +591,6 @@ function init() {
                 
                 fill: false
             }
-
             // fa vedere le label delle serie
             val.chart.options.plugins.legend.display=true;
         }
