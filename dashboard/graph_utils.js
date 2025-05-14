@@ -657,8 +657,9 @@ function secondiDallaMezzanotte() {
 }
 
 function gestScalaGrafici(){
-    if (this.checked !== undefined)
-        scalaGraficiAutomatica = this.checked;
+    ele = document.getElementById('scalaGraficiAutomatica');
+    if (ele.checked !== undefined)
+        scalaGraficiAutomatica = ele.checked;
     //console.log('Checkbox "Scala grafici automatica" selezionata:', scalaGraficiAutomatica);    
     Object.keys(grafici).forEach((nome) => {
         if (grafici[nome].inGrafico !== undefined){
