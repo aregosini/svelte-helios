@@ -188,7 +188,7 @@ function isOggi(dataStringa) {
   let anno = oggi.getFullYear();
 
   let dataOggi = `${giorno}-${mese}-${anno}`;
-  console.log('oggi -',dataOggi,'- stringa -',dataStringa,'- esito ',dataStringa === dataOggi);
+  //console.log('oggi -',dataOggi,'- stringa -',dataStringa,'- esito ',dataStringa === dataOggi);
 
   return dataStringa === dataOggi;
 }
