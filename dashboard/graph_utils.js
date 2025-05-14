@@ -175,6 +175,19 @@ function adjData(data){
         //console.log(data[nome]);       
     });
 }
+
+function isOggi(dataStringa) {
+  let oggi = new Date();
+  let giorno = String(oggi.getDate()).padStart(2, '0');
+  let mese = String(oggi.getMonth() + 1).padStart(2, '0');
+  let anno = oggi.getFullYear();
+
+  let dataOggi = `${giorno}-${mese}-${anno}`;
+  console.log('oggi -',dataOggi,'- stringa -',dataStringa,'- esito ',dataStringa === dataOggi);
+
+  return dataStringa === dataOggi;
+}
+
 function getViewportWidth() {
     return window.innerWidth;
   }
@@ -202,31 +215,45 @@ async function updateCharts(second = timeLaps) {
     //console.log(data);
 
     Object.keys(grafici).forEach((nome) => {
-        const grf  = grafici[nome];
-        const chart = grf.chart;
-        const ds    = grf.dataset || 0;
-        const dati  = data[nome];
-        
-        if (!dati) return;
-          
-            dati.forEach(riga => {
-              
+        if (nome in data) {
+            const grf  = grafici[nome];
+            const chart = grf.chart;
+            const ds    = grf.dataset || 0;
+            const dati  = data[nome];
+
+            // cambio data oppure non sono i dati di oggi? stampiamo la data
+            if (dati[0].time.split(" ")[0] !== dati[dati.length-1].time.split(" ")[0] || !isOggi(dati[0].time.split(" ")[0])) // cambio data?
+                precData = "";
+            else
+                precData = dati[0].time.split(" ")[0];
+            
+            //    console.log('precData ',precData);
+            for (i=0; i<dati.length;i++){
                 if (ds === 0) {
-                chart.data.labels.push(riga.time);
-                }
-              
-                chart.data.datasets[ds].data.push(riga.value);
-            });
+                    if (dati[i].time.split(" ")[0] !== precData){ // cambio data? visualizziamo la data
+                        time = dati[i].time;
+                        precData = dati[i].time.split(" ")[0];
+                        //console.log("data ",time," -",precData,"-");
+                    }
+                    else 
+                        time = dati[i].time.split(" ")[1]   // prende solo l'ora
+                    chart.data.labels.push(time);
+                }            
+                chart.data.datasets[ds].data.push(dati[i].value);
+            }
+            
+            // ci sono più di MaxPointGraph? togliamo i vecchi
             chart.data.labels.splice(0, chart.data.labels.length - MaxPointGraph);
             chart.data.datasets[ds]
-                 .data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
-          
-            if (chart.data.labels.length >= MaxPointGraph) {
-              chart.update('none');
-            } else {
-              chart.update();
-            }
-          });
+                    .data.splice(0, chart.data.datasets[ds].data.length - MaxPointGraph);
+        }
+        // in tutti i casi aggiorniamo i grafici
+        if (grafici[nome].chart.data.labels.length >= MaxPointGraph) {
+            grafici[nome].chart.update('none');
+        } else {
+            grafici[nome].chart.update();
+        }
+    });
 }
 
 function fetchDataSimElettro(second = timeLaps) {
@@ -494,8 +521,8 @@ function paginaSerra() {
 
     if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro
         grafici = {
-            temperatura1: {descr:"Temperatura (°C)",y:17.3,ymin:5,ymax:25,label:'temp. 1'},
-            temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:22},
+            temperatura1: {descr:"Temperatura (°C)",y:17.3,ymin:5,ymax:30,label:'temp. 1'},
+            temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:30},
             pH1: {descr:"PH",y:4.4,ymin:0,ymax:10,label:'PH 1'},
             pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:10},
             conducimetro1: {descr:"Conducibilità (uS)",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
@@ -503,8 +530,8 @@ function paginaSerra() {
         };
     else
         grafici = {
-            temperatura1: {descr:"Temperatura 1 (°C)",y:17.3,ymin:5,ymax:25},
-            temperatura2: {descr:"Temperatura 2 (°C)",y:16.8,ymin:5,ymax:22},
+            temperatura1: {descr:"Temperatura 1 (°C)",y:17.3,ymin:5,ymax:30},
+            temperatura2: {descr:"Temperatura 2 (°C)",y:16.8,ymin:5,ymax:30},
             pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
             pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
             conducimetro1: {descr:"Conducibilità 1 (uS)",y:1800,ymin:0,ymax:3500},
@@ -518,6 +545,18 @@ function destroyCharts(){
     Object.values(grafici).forEach(val => {
         if ('chart' in val)
             val.chart.destroy()
+    })
+}
+// Funzione per cancellare i dati presenti nei grafici
+function clearCharts(){
+    Object.values(grafici).forEach(val => {
+        if ('chart' in val){
+            const ds    = val.dataset || 0;
+            val.chart.data.datasets.forEach(dataset => {
+                dataset.data = [];
+            });
+            val.chart.data.labels = [];
+        }
     })
 }
 
@@ -603,6 +642,8 @@ function secondiDallaMezzanotte() {
             loadNpoint = 7 * 24 * 3600; // 7 giorni in secondi
             break;
     }
+    // pulisce dai vecchi dati
+    clearCharts();
     updateCharts(loadNpoint);
 }
 
