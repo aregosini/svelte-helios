@@ -720,7 +720,6 @@ window.onload = function() {
     intervalId = setInterval(() => {
         if (realTime) {// se in realTime, aggiorniamo i grafici
             updateCharts(); // Aggiorna i grafici
-            console.log ('Timer...');
         }
     }, timeLaps * 1000);
   
