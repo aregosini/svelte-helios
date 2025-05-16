@@ -1,6 +1,6 @@
 let MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateDataElettro = false; // simuliamo i dati?
+let simulateDataElettro = true; // simuliamo i dati?
 let simulateDataSerra =false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
@@ -680,25 +680,19 @@ function gestScalaGrafici(){
 
 function toggleSimula() {
     if (pagina === 'elettro') {            
-            simulateDataElettro = !simulateDataElettro;
-            console.log('Simulazione toggled in Elettrolizzatore');
-        } else if (pagina === 'serra') {
-            simulateDataSerra = !simulateDataSerra;
-            console.log('Simulazione toggled in Serra');
-        }
-        init();
-        return;
+        simulateDataElettro = !simulateDataElettro;
+        console.log('Simulazione toggled in Elettrolizzatore');
+    } else if (pagina === 'serra') {
+        simulateDataSerra = !simulateDataSerra;
+        console.log('Simulazione toggled in Serra');
     }
+    init();
+    return;
+}
 
 // Inizializza la pagina
 window.onload = function() {
     const params = new URLSearchParams(window.location.search);
-    // Controlla se esiste il parametro 'nosim' nell'URL per non simulare i dati ma prenderli dal sito del DB
-    if (params.has('nosim')) {
-        simulateDataSerra = false;
-        simulateDataElettro = false;
-        timeLaps = 1; // ogni secondo non in simulazione
-    }
     if (params.has('noonechart')) {
         oneChart = false;
     }
@@ -712,10 +706,9 @@ window.onload = function() {
     document.getElementById('scalaGraficiAutomatica').addEventListener('change', gestScalaGrafici);
     realTime = document.getElementById('visualizza').selectedIndex == 0;
 
-    if (params.has('serra')) {
-        paginaSerra();
-    }
-    else paginaElettro();
+    // quale pagina visualizzare per prima
+    paginaSerra();
+    //paginaElettro();
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
         if (realTime) {// se in realTime, aggiorniamo i grafici
