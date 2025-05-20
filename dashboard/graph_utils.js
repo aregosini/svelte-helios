@@ -486,7 +486,7 @@ function updateStatoSerra(data) {
     
     // Determina il testo dello stato
     const textStatus = ping_serra == 1 ? "" : "non ";
-    statusText.textContent = `Sensori serra ${textStatus}ativi`;
+    statusText.textContent = `Sensori serra ${textStatus}attivi`;
 }
 
 function paginaElettro() {
