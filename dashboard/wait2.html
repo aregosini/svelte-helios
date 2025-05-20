@@ -1,0 +1,40 @@
+<div id="progress-container" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 5px;
+  background: #eee;
+  z-index: 9999;
+">
+  <div id="progress-bar" style="
+    width: 0%;
+    height: 100%;
+    background: #2196F3;
+    transition: width 0.3s;
+  "></div>
+</div>
+
+<button onclick="caricaBar()">Carica con barra</button>
+
+<script>
+function caricaBar() {
+  document.getElementById("progress-container").style.display = "block";
+  document.body.style.cursor = 'wait';
+
+  let progress = 0;
+  let intervallo = setInterval(() => {
+    progress += 10;
+    document.getElementById("progress-bar").style.width = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(intervallo);
+      setTimeout(() => {
+        document.getElementById("progress-container").style.display = "none";
+        document.body.style.cursor = 'default';
+        document.getElementById("progress-bar").style.width = "0%";
+      }, 300);
+    }
+  }, 300);
+}
+</script>

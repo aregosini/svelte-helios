@@ -195,7 +195,8 @@ function isOggi(dataStringa) {
 
 function getViewportWidth() {
     return window.innerWidth;
-  }
+}
+
 // Funzione per aggiornare i grafici con nuovi dati
 async function updateCharts(second = timeLaps) {
     if(getViewportWidth() < 768) {
@@ -474,8 +475,8 @@ function updateStatoSerra(data) {
 
     // Determina il colore del pallino
     if(simulateDataSerra== false) {
-    const dotColor = ping_serra == 1 ? "green" : "red";
-    statusDot.style.backgroundColor = dotColor;
+        const dotColor = ping_serra == 1 ? "green" : "red";
+        statusDot.style.backgroundColor = dotColor;
     }
     else {
         const dotColor = ping_serra == 1 ? "lightgreen" : "red";
@@ -485,7 +486,7 @@ function updateStatoSerra(data) {
     
     // Determina il testo dello stato
     const textStatus = ping_serra == 1 ? "" : "non ";
-    statusText.textContent = `Sensori serra ${textStatus}attivi`;
+    statusText.textContent = `Sensori serra ${textStatus}ativi`;
 }
 
 function paginaElettro() {
@@ -509,10 +510,6 @@ function paginaElettro() {
 
     init();
 }
-
-
-
-
 
 function paginaSerra() {
     toggleMenu();
@@ -595,7 +592,10 @@ function init() {
             val.chart.options.plugins.legend.display=true;
         }
     });
-    updateCharts(loadNpoint);
+    document.getElementById('loader').style.display = 'flex';
+    updateCharts(loadNpoint).then(()=>{       
+        document.getElementById('loader').style.display = 'none';
+    });
     gestScalaGrafici();
 }
 
@@ -652,8 +652,11 @@ function secondiDallaMezzanotte() {
             break;
     }
     // pulisce dai vecchi dati
+    document.getElementById('loader').style.display = 'flex';
     clearCharts();
-    updateCharts(loadNpoint);
+    updateCharts(loadNpoint).then(()=>{       
+        document.getElementById('loader').style.display = 'none';
+    });
 }
 
 function gestScalaGrafici(){
@@ -707,7 +710,9 @@ window.onload = function() {
     realTime = document.getElementById('visualizza').selectedIndex == 0;
 
     // quale pagina visualizzare per prima
-    paginaSerra();
+    paginaSerra().then(()=>{       
+        document.getElementById('loader').style.display = 'none';
+    });
     //paginaElettro();
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
@@ -715,7 +720,6 @@ window.onload = function() {
             updateCharts(); // Aggiorna i grafici
         }
     }, timeLaps * 1000);
-  
 }
 window.onpopstate = function() {
     clearInterval(intervalId);

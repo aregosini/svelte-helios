@@ -1,0 +1,66 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dati Sensori</title>
+    <!-- Stili per le tabelle e il popup di caricamento -->
+    <style>
+      #loader {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.4);
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      } 
+      .loader_bck {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      }
+      .spinner {
+        border: 4px solid #ccc;
+        border-top: 4px solid #333;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 10px auto;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+    
+      
+<div id="loader">
+  <div class="loader_bck">
+    <div class="spinner"></div>
+    <div>Caricamento in corso...</div>
+  </div>
+</div>
+
+<style>
+
+</style>
+
+<button onclick="carica()">Avvia operazione</button>
+
+<script>
+function carica() {
+  document.getElementById("loader").style.display = "flex";
+  document.body.style.cursor = 'wait';
+
+  // Simulazione operazione pesante
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.body.style.cursor = 'default';
+  }, 3000);
+}
+</script>
