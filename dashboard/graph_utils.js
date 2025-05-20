@@ -1,6 +1,6 @@
 let MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateDataElettro = true; // simuliamo i dati?
+let simulateDataElettro = false; // simuliamo i dati?
 let simulateDataSerra =false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
@@ -526,21 +526,21 @@ function paginaSerra() {
 
     if (oneChart) // tem1 2 nello stesso grafico. e anche ph e conducimetro
         grafici = {
-            temperatura1: {descr:"Temperatura (°C)",y:17.3,ymin:5,ymax:30,label:'temp. 1'},
-            temperatura2: {inGrafico:'temperatura1',dataset:1,label:'temp. 2',y:16.0,ymin:5,ymax:30},
-            pH1: {descr:"PH",y:4.4,ymin:0,ymax:10,label:'PH 1'},
-            pH2: {inGrafico:'pH1',dataset:1,label:'PH 2',y:4.1,ymin:0,ymax:10},
-            conducimetro1: {descr:"Conducibilità (uS)",y:1800,ymin:0,ymax:3500,label:'cond. 1'},
-            conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'cond. 2',y:1770,ymin:0,ymax:3500}
+            temperatura1: {descr:"Temperatura (°C)",y:17.3,ymin:5,ymax:30,label:'ingresso'},
+            temperatura2: {inGrafico:'temperatura1',dataset:1,label:'uscita',y:16.0,ymin:5,ymax:30},
+            pH1: {descr:"PH",y:4.4,ymin:0,ymax:10,label:'ingresso'},
+            pH2: {inGrafico:'pH1',dataset:1,label:'uscita',y:4.1,ymin:0,ymax:10},
+            conducimetro1: {descr:"Conducibilità (uS)",y:1800,ymin:0,ymax:3500,label:'ingresso'},
+            conducimetro2: {inGrafico:'conducimetro1',dataset:1,label:'uscita',y:1770,ymin:0,ymax:3500}
         };
     else
         grafici = {
-            temperatura1: {descr:"Temperatura 1 (°C)",y:17.3,ymin:5,ymax:30},
-            temperatura2: {descr:"Temperatura 2 (°C)",y:16.8,ymin:5,ymax:30},
-            pH1: {descr:"PH 1",y:4.4,ymin:0,ymax:8},
-            pH2: {descr:"PH 2",y:4.7,ymin:0,ymax:8},
-            conducimetro1: {descr:"Conducibilità 1 (uS)",y:1800,ymin:0,ymax:3500},
-            conducimetro2: {descr:"Conducibilità 2 (uS)",y:1770,ymin:0,ymax:3500}
+            temperatura1: {descr:"Temperatura ingresso (°C)",y:17.3,ymin:5,ymax:30},
+            temperatura2: {descr:"Temperatura uscita (°C)",y:16.8,ymin:5,ymax:30},
+            pH1: {descr:"PH ingresso",y:4.4,ymin:0,ymax:8},
+            pH2: {descr:"PH uscita",y:4.7,ymin:0,ymax:8},
+            conducimetro1: {descr:"Conducibilità ingresso (uS)",y:1800,ymin:0,ymax:3500},
+            conducimetro2: {descr:"Conducibilità uscita (uS)",y:1770,ymin:0,ymax:3500}
         };
     init();
 }
@@ -589,7 +589,7 @@ function init() {
                 borderWidth: borderWidth, // Thicker line
                 pointRadius: pointRadius, // Larger points
                 
-                fill: false
+                fill: true
             }
             // fa vedere le label delle serie
             val.chart.options.plugins.legend.display=true;
