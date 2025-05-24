@@ -710,9 +710,7 @@ window.onload = function() {
     realTime = document.getElementById('visualizza').selectedIndex == 0;
 
     // quale pagina visualizzare per prima
-    paginaSerra().then(()=>{       
-        document.getElementById('loader').style.display = 'none';
-    });
+    paginaSerra();
     //paginaElettro();
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
