@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizza Immagine</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f7f7f7;
+            padding: 20px;
+            text-align: center;
+        }
+        .frameImg {
+            display: inline-block;
+            padding: 10px;
+            border: 5px solid #333;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .frameImg img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .timestamp {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 8px;
+        }
+        /* Modal a schermo intero */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 99;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 95%;
+            max-height: 95%;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Immagine aggiornata</h1>
+
+    <div class="frameImg">
+        <img id="webcamImage" src="" alt="Immagine da webcam" onclick="openModal()">
+    </div>
+
+    <div class="timestamp" id="imageTimestamp">
+        Caricamento data...
+    </div>
+
+    <!-- Modal img webcam -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        let lastTimestamp = null;
+
+        function checkAndUpdateImage() {
+            fetch('file-info.php')
+                .then(response => response.json())
+                .then(data => {
+                    const currentTimestamp = data.timestamp;
+
+                    if (currentTimestamp !== lastTimestamp) {
+                        console.log('Nuova immagine trovata, aggiorno...');
+                        const imageUrl = 'latest.jpg?t=' + new Date().getTime();
+                        document.getElementById('webcamImage').src = imageUrl;
+                        document.getElementById('modalImg').src = imageUrl;
+                        document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ' + currentTimestamp;
+                        lastTimestamp = currentTimestamp;
+                    } else {
+                        console.log('Immagine invariata.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento data:', error);
+                    document.getElementById('imageTimestamp').textContent = 'Impossibile ottenere data aggiornamento';
+                });
+        }
+
+        // Primo caricamento
+        checkAndUpdateImage();
+
+        // Controllo ogni 30 secondi
+        setInterval(checkAndUpdateImage, 30000);
+
+        // Modal funzionalità
+        function openModal() {
+            document.getElementById('myModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

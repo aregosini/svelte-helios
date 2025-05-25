@@ -494,6 +494,10 @@ function paginaElettro() {
     if (pagina == 'elettro') return; // Already on the Elettrolizzatore page
 
     pagina = 'elettro';
+    if (timerWebcam != null) {
+        clearInterval(timerWebcam);
+        timerWebcam = null;
+    }
     document.getElementById('titolo-pagina').innerText = '';
     updateStatoPagina = updateStatoElettro;
 
@@ -563,6 +567,7 @@ function clearCharts(){
 }
 
 function init() {
+    document.getElementById('loader').style.display = 'flex';
     // rimuoviamo gli eventuali graficxi precedenti
     const chartsContainer = document.getElementById('charts-container');
     chartsContainer.innerHTML = '';
@@ -592,11 +597,51 @@ function init() {
             val.chart.options.plugins.legend.display=true;
         }
     });
-    document.getElementById('loader').style.display = 'flex';
+    if (pagina === 'serra'){
+        createImageWebcamBlock(chartsContainer)
+        // webcam
+        // Primo caricamento
+        checkAndUpdateImage();
+
+        // Controllo ogni 30 secondi
+        timerWebcam = setInterval(checkAndUpdateImage, 30000);
+    }
     updateCharts(loadNpoint).then(()=>{       
         document.getElementById('loader').style.display = 'none';
     });
     gestScalaGrafici();
+}
+
+function createImageWebcamBlock(container) {
+
+    // Creo il div frameImg
+    const webCamDiv = document.createElement('div');
+    webCamDiv.className = 'webCamDiv';
+    webCamDiv.innerHTML = '<h4>Immagine da webcam</h4>';
+    
+    const frameDiv = document.createElement('div');
+    frameDiv.className = 'frameImg';
+
+    // Creo l'immagine
+    const img = document.createElement('img');
+    img.id = 'webcamImage';
+    img.src = '';
+    img.alt = 'Immagine da webcam';
+    img.onclick = openModal;  // senza () così passa il riferimento alla funzione
+
+    // Aggiungo l'immagine al div
+    frameDiv.appendChild(img);
+
+    // Creo il div timestamp
+    const timestampDiv = document.createElement('div');
+    timestampDiv.className = 'timestamp';
+    timestampDiv.id = 'imageTimestamp';
+    timestampDiv.textContent = 'Caricamento data...';
+
+    // Appendo i due div al contenitore principale
+    webCamDiv.appendChild(frameDiv);
+    webCamDiv.appendChild(timestampDiv);
+    container.appendChild(webCamDiv);
 }
 
 
@@ -718,8 +763,56 @@ window.onload = function() {
             updateCharts(); // Aggiorna i grafici
         }
     }, timeLaps * 1000);
+
 }
 window.onpopstate = function() {
     clearInterval(intervalId);
     destroyCharts();
+}
+
+/** gestione webcam  */
+let lastTimestamp = null;
+let timerWebcam = null;
+
+function checkAndUpdateImage() { 
+    
+    // per provarla localmente 
+    /*
+    console.log('Nuova immagine trovata, aggiorno...');
+    const imageUrl = 'latest.jpg?t=' + new Date().getTime();
+    document.getElementById('webcamImage').src = imageUrl;
+    document.getElementById('modalwebcamImg').src = imageUrl;
+    document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ';
+    return;
+    */
+
+    fetch('file-info.php')
+        .then(response => response.json())
+        .then(data => {
+            const currentTimestamp = data.timestamp;
+
+            if (currentTimestamp !== lastTimestamp) {
+                console.log('Nuova immagine trovata, aggiorno...');
+                const imageUrl = 'latest.jpg?t=' + new Date().getTime();
+                document.getElementById('webcamImage').src = imageUrl;
+                document.getElementById('modalwebcamImg').src = imageUrl;
+                document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ' + currentTimestamp;
+                lastTimestamp = currentTimestamp;
+            } else {
+                console.log('Immagine invariata.');
+            }
+        })
+        .catch(error => {
+            console.error('Errore nel caricamento data:', error);
+            document.getElementById('imageTimestamp').textContent = 'Impossibile ottenere data aggiornamento';
+        });
+}
+
+// Modal funzionalità
+function openModal() {
+    document.getElementById('mywbcamModal').style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById('mywbcamModal').style.display = "none";
 }
