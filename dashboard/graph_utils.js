@@ -16,7 +16,6 @@ let allarme = new Audio('alarm.mp3');  // file per l'allarme
 let borderWidth = 1; // Thicker line
 let pointRadius = 2; // Larger points
 
-
 // Funzione per ottenegenerare numeri random come quelli ricevuti dal server
 function genOra(secondi=timeLaps){
     const now = new Date();
@@ -53,10 +52,10 @@ function fetchDataSim(second=timeLaps) {
 //async function fetchData(second=timeLaps) {
 async function fetchData(second=timeLaps) {
     try {
+        console.log('GET: ',apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
         const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
-        //console.log(apiUrl+`?second=${second}`);
         if (!response.ok) {
             throw new Error('Errore nel recupero dei dati');
         }
@@ -64,7 +63,7 @@ async function fetchData(second=timeLaps) {
         return data;  // Assumiamo che i dati siano già nel formato corretto
     } catch (error) {
         console.error('Errore durante la richiesta dei dati:', error);
-        return [];  // Ritorna un oggetto vuoto in caso di errore
+        return null;  // Ritorna un oggetto vuoto in caso di network error
     }
 }
 
@@ -216,7 +215,11 @@ async function updateCharts(second = timeLaps) {
         // Fetch dei dati reali dal server
         data = await fetchData(second);
     }
-
+    if (data == null){
+        console.log('network error');
+        showLoader(true);
+        return true;
+    }
     updateStatoPagina(data);
     //console.log(data);
 
@@ -260,6 +263,21 @@ async function updateCharts(second = timeLaps) {
             grafici[nome].chart.update();
         }
     });
+    return false;
+}
+
+function showLoader(netError=false){
+    if (netError)
+        msg = "Errore di connessione rete..."
+    else
+        msg = "Caricamento in corso..."
+
+    document.getElementById('loader-text').innerText = msg;
+    document.getElementById('loader').style.display = 'flex';
+}
+
+function hideLoader(){
+    document.getElementById('loader').style.display = 'none';
 }
 
 function fetchDataSimElettro(second = timeLaps) {
@@ -467,7 +485,10 @@ function updateStatoSerra(data) {
         ping_serra = lastObject.value;
         //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
     }
-    else ping_serra = 0;
+    else {
+        ping_serra = 0;
+        console.log('pingSerra not in data');
+    }
 
     //console.log('ping serra'+ping_serra);
     const statusDot = document.getElementById("status-dot");
@@ -511,7 +532,6 @@ function paginaElettro() {
         AIM_Cell_Current: {descr:"Corrente della cella (A)",y:5.2,ymin:0,ymax:6.5},
         AIM_Cell_Voltage: {descr:"Tensione della cella (V)",y:19,ymin:0,ymax:25}
     };
-
     init();
 }
 
@@ -567,11 +587,20 @@ function clearCharts(){
 }
 
 function init() {
-    document.getElementById('loader').style.display = 'flex';
+    showLoader();
     // rimuoviamo gli eventuali graficxi precedenti
     const chartsContainer = document.getElementById('charts-container');
     chartsContainer.innerHTML = '';
     destroyCharts();
+    if (pagina === 'serra' ){
+        createImageWebcamBlock(chartsContainer)
+        // webcam
+        // Primo caricamento
+        checkAndUpdateImage();
+
+        // Controllo ogni 30 secondi
+        timerWebcam = setInterval(checkAndUpdateImage, 15000);
+    }
     Object.keys(grafici).forEach((nome) => {
         val = grafici[nome];
         if (!('inGrafico' in val)) { // non è una seconda serie di dati
@@ -597,17 +626,10 @@ function init() {
             val.chart.options.plugins.legend.display=true;
         }
     });
-    if (pagina === 'serra'){
-        createImageWebcamBlock(chartsContainer)
-        // webcam
-        // Primo caricamento
-        checkAndUpdateImage();
-
-        // Controllo ogni 30 secondi
-        timerWebcam = setInterval(checkAndUpdateImage, 30000);
-    }
-    updateCharts(loadNpoint).then(()=>{       
-        document.getElementById('loader').style.display = 'none';
+    
+    updateCharts(loadNpoint).then((netError)=>{ 
+        if (!netError)
+            hideLoader();
     });
     gestScalaGrafici();
 }
@@ -617,7 +639,7 @@ function createImageWebcamBlock(container) {
     // Creo il div frameImg
     const webCamDiv = document.createElement('div');
     webCamDiv.className = 'webCamDiv';
-    webCamDiv.innerHTML = '<h4>Immagine da webcam</h4>';
+    //webCamDiv.innerHTML = '<h4>Immagine da webcam</h4>';
     
     const frameDiv = document.createElement('div');
     frameDiv.className = 'frameImg';
@@ -697,10 +719,11 @@ function secondiDallaMezzanotte() {
             break;
     }
     // pulisce dai vecchi dati
-    document.getElementById('loader').style.display = 'flex';
+    showLoader();
     clearCharts();
-    updateCharts(loadNpoint).then(()=>{       
-        document.getElementById('loader').style.display = 'none';
+    updateCharts(loadNpoint).then( netError =>{  
+        if (!netError)
+            hideLoader();
     });
 }
 
@@ -760,18 +783,21 @@ window.onload = function() {
     // Aggiorna i grafici e lo stato ogni secondo
     intervalId = setInterval(() => {
         if (realTime) {// se in realTime, aggiorniamo i grafici
-            updateCharts(); // Aggiorna i grafici
+            // Aggiorna i grafici
+            updateCharts().then(netError  =>{       
+                if (netError == false)
+                    hideLoader();            
+                });
         }
     }, timeLaps * 1000);
-
-    // Chiude la modal dell'immagone webcam col tasto Esc
+    // Chiude la modal dell'immagine della webcam col tasto Esc
     document.addEventListener("keydown", function(event) {
         if (event.key === "Escape") {
             closeModal();
         }
     });
-}
 
+}
 window.onpopstate = function() {
     clearInterval(intervalId);
     destroyCharts();
@@ -799,7 +825,7 @@ function checkAndUpdateImage() {
             const currentTimestamp = data.timestamp;
 
             if (currentTimestamp !== lastTimestamp) {
-                console.log('Nuova immagine trovata, aggiorno...');
+                //console.log('Nuova immagine trovata, aggiorno...');
                 const imageUrl = 'latest.jpg?t=' + new Date().getTime();
                 document.getElementById('webcamImage').src = imageUrl;
                 document.getElementById('modalwebcamImg').src = imageUrl;
