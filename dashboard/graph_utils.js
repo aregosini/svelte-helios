@@ -717,6 +717,10 @@ function secondiDallaMezzanotte() {
             realTime = false;
             loadNpoint = 7 * 24 * 3600; // 7 giorni in secondi
             break;
+        case 5: // Ultimi 10 giorni
+            realTime = false;
+            loadNpoint = 10 * 24 * 3600; // 10 giorni in secondi
+            break;
     }
     // pulisce dai vecchi dati
     showLoader();
