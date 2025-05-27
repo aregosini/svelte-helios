@@ -764,7 +764,14 @@ window.onload = function() {
         }
     }, timeLaps * 1000);
 
+    // Chiude la modal dell'immagone webcam col tasto Esc
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
 }
+
 window.onpopstate = function() {
     clearInterval(intervalId);
     destroyCharts();

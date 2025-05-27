@@ -238,7 +238,7 @@ stato elettrolizzatore e serra
 
 
 
-@media (max-width: 480px) {
+@media (max-width: 480px) and (pointer: coarse){
   #titolo-pagina {
     font-size: 1.8em; /* Smaller title for small screens */
   }
@@ -269,7 +269,7 @@ stato elettrolizzatore e serra
 
 }
 
-@media (max-width: 992px) {
+@media (max-width: 992px) and (pointer: coarse){
   .chart-wrapper {
     aspect-ratio: 8 / 3;
   }
@@ -280,8 +280,8 @@ stato elettrolizzatore e serra
   }
 }
 
-/* Breakpoint per dispositivi sotto i 768px */
-@media (max-width: 768px) {
+/* Breakpoint per smartphone veri (480px + touch) */
+@media (max-width: 768px) and (pointer: coarse) {
 
   
   .chart-wrapper {
@@ -318,6 +318,7 @@ stato elettrolizzatore e serra
     text-align: center;
   }
 }
+
 
 /****** frame dell'immagine della webcam ***/
 .webCamDiv {
@@ -363,13 +364,3 @@ stato elettrolizzatore e serra
     max-width: 95%;
     max-height: 95%;
 }
-.closewebcam {
-    position: absolute;
-    top: 20px;
-    right: 35px;
-    color: #fff;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
