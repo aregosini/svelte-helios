@@ -52,7 +52,7 @@ function fetchDataSim(second=timeLaps) {
 //async function fetchData(second=timeLaps) {
 async function fetchData(second=timeLaps) {
     try {
-        console.log('GET: ',apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
+        //console.log('GET: ',apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
         const response = await fetch(apiUrl+`?second=${second}&maxPoint=${MaxPointGraph}&pagina=${pagina}`,{ cache: 'no-store' });
         //const response = await fetch(apiUrl+`?data=2025-03-18&second=3600*3`,{ cache: 'no-store' });
 
@@ -713,11 +713,15 @@ function secondiDallaMezzanotte() {
             realTime = false;
             loadNpoint = secondiDallaMezzanotte();
             break;
-        case 4: // Ultimi 7 giorni
+        case 4: // ultime 24 ore
+            realTime = false;
+            loadNpoint = 24 * 3600; // 1 giorni in secondi
+            break;
+        case 5: // Ultimi 7 giorni
             realTime = false;
             loadNpoint = 7 * 24 * 3600; // 7 giorni in secondi
             break;
-        case 5: // Ultimi 10 giorni
+        case 6: // Ultimi 10 giorni
             realTime = false;
             loadNpoint = 10 * 24 * 3600; // 10 giorni in secondi
             break;
