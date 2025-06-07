@@ -3,7 +3,7 @@ let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB
 let simulateDataElettro = false; // simuliamo i dati?
 let simulateDataSerra =false; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
-let timeLaps = 1; // refresh ogni 2 secondi se non in simulaData
+let timeLaps = 5; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
 let pagina; // pagina 'elettro' o 'serra'
 let grafici={}; //usato per nomi variabili e grafici
@@ -313,12 +313,12 @@ function fetchDataSimSerra(second = timeLaps) {
 }
 
 function generateDescription(decision) {
-    if (decision == 1) {
-        const chartsContainer = document.getElementById('big-card-interno');
+    const chartsContainer = document.getElementById('big-card-interno');
+    chartsContainer.innerHTML = ''; // Clear any existing content
+    const wrapper2 = document.createElement('div');
+    if (decision == 1) { // elettrolizzatore
         chartsContainer.classList.remove("box-serra"); // Rimuovi la classe "box-serra"
         chartsContainer.classList.add("box-elettro"); // Aggiungi la classe "box-elettro"
-        chartsContainer.innerHTML = ''; // Clear any existing content
-        const wrapper2 = document.createElement('div');
         wrapper2.innerHTML = `
             
             <h1 class="text-center elettro mb-4 bold">Dati raccolti dall’elettrolizzatore</h1>
@@ -330,9 +330,6 @@ function generateDescription(decision) {
         chartsContainer.appendChild(wrapper2);
         generateAlarms(1); // genera gli allarmi per l'elettrolizzatore
     }else{
-        const chartsContainer = document.getElementById('big-card-interno');
-        chartsContainer.innerHTML = ''; // Clear any existing content
-        const wrapper2 = document.createElement('div');
         chartsContainer.classList.remove("box-elettro"); // Rimuovi la classe "box-serra"
         chartsContainer.classList.add("box-serra"); // Aggiungi la classe "box-elettro"
         wrapper2.innerHTML = `
@@ -368,7 +365,7 @@ function generateAlarms(data){
                 <span id="status-text-alarm" class="status-text">Alarms</span>
             </div>
             <div class="status-item">
-                <div id="status-dot-warning" class="status-dot"></div>
+                <div id="dotstatus--warning" class="status-dot"></div>
                 <span id="status-text-warning" class="status-text">Warnings</span>
             </div>
         </div>`;
@@ -381,13 +378,15 @@ function generateAlarms(data){
                 <div id="status-dot" class="status-dot"></div>
                 <span id="status-text" class="status-text">Sensori serra attivi</span>
             </div>
+            <div class="status-item">
+                <div id="status-dot-valvola" class="status-dot"></div>
+                <span id="status-text-valvola" class="status-text">Valvola chiusa</span>
+            </div>
         </div>`;
         chartsContainer.appendChild(wrapper2);
 
     }
 }
-
-
 
  // Funzione per determinare il colore del pallino e il testo
  function updateStatoElettro(data) {
@@ -416,7 +415,7 @@ function generateAlarms(data){
     }
     else warnings = 0;
     
-    console.log("alarms: ",alarms,"warnings: ",warnings);
+    //console.log("alarms: ",alarms,"warnings: ",warnings);
     // emette il suono dell'allarme
     if (alarms==1 || warnings==1){
         allarme.play();
@@ -432,11 +431,11 @@ function generateAlarms(data){
     if(simulateDataElettro == false) {
         dotColor = ping_elettro == 1 ? "green" : "red";
         statusDot.style.backgroundColor = dotColor;
-        }
-        else {
-            dotColor = ping_elettro == 1 ? "lightgreen" : "red";
-            statusDot.style.backgroundColor = dotColor;
-        }
+    }
+    else {
+        dotColor = ping_elettro == 1 ? "lightgreen" : "red";
+        statusDot.style.backgroundColor = dotColor;
+    }
     
     // Determina il testo dello stato
     textStatus = ping_elettro == 1 ? "" : "non ";
@@ -481,33 +480,59 @@ function updateStatoSerra(data) {
     if ('pingSerra' in data) {
         //console.log("dati pingSerra: "+data.pingSerra);
         // prendo solo il valore dell'ultima riga (la più recente)
-        const lastObject = data.pingSerra[data.pingSerra.length - 1];
-        ping_serra = lastObject.value;
-        //console.log(`ping elettro: ${lastObject.time} ${ping_elettro}`);
+        //const lastObject = data.pingSerra[data.pingSerra.length - 1];
+        //ping_serra = lastObject.value;
+        ping_serra = data.pingSerra[0].value;
     }
     else {
         ping_serra = 0;
         console.log('pingSerra not in data');
+        console.log(data);
+    }
+
+    if ('valvolaAperta' in data) {
+        const lastObject = data.valvolaAperta[data.valvolaAperta.length - 1];
+        valvolaAperta = lastObject.value;
+    }
+    else {
+        valvolaAperta = 0;
+        console.log('valvolaAperta not in data');
+        console.log(data);
     }
 
     //console.log('ping serra'+ping_serra);
-    const statusDot = document.getElementById("status-dot");
-    const statusText = document.getElementById("status-text");
+    statusDot = document.getElementById("status-dot");
+    statusText = document.getElementById("status-text");
 
     // Determina il colore del pallino
     if(simulateDataSerra== false) {
-        const dotColor = ping_serra == 1 ? "green" : "red";
-        statusDot.style.backgroundColor = dotColor;
+        dotColor = ping_serra == 1 ? "green" : "red";
     }
     else {
-        const dotColor = ping_serra == 1 ? "lightgreen" : "red";
-        statusDot.style.backgroundColor = dotColor;
-
+        dotColor = ping_serra == 1 ? "lightgreen" : "red";
     }
+    statusDot.style.backgroundColor = dotColor;
     
     // Determina il testo dello stato
-    const textStatus = ping_serra == 1 ? "" : "non ";
+    textStatus = ping_serra == 1 ? "" : "non ";
     statusText.textContent = `Sensori serra ${textStatus}attivi`;
+
+    // flag Valvola
+    statusDot = document.getElementById("status-dot-valvola");
+    statusText = document.getElementById("status-text-valvola");
+
+    // Determina il colore del pallino
+    if(simulateDataSerra== false) {
+        dotColor = valvolaAperta == 0 ? "green" : "red";
+    }
+    else {
+        dotColor = valvolaAperta == 0 ? "lightgreen" : "red";
+    }
+    statusDot.style.backgroundColor = dotColor;
+    
+    // Determina il testo dello stato
+    textStatus = valvolaAperta == 1 ? "aperta" : "chiusa";
+    statusText.textContent = `Valvola ${textStatus}`;
 }
 
 function paginaElettro() {
