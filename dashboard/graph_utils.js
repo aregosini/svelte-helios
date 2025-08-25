@@ -853,7 +853,7 @@ function checkAndUpdateImage() {
             lastTimestamp = new Date(ora.getTime() - sec * 1000);
         if ((ora - lastTimestamp) / 1000 >= sec) {// vecchio di sec secondi?
             lastTimestamp = ora;
-            const imageUrl = 'latest.jpg?t=' + ora.getTime();
+            const imageUrl = 'img-simula.jpg?t=' + ora.getTime();
             document.getElementById('webcamImage').src = imageUrl;
             document.getElementById('modalwebcamImg').src = imageUrl;
             lastStr = ora.toLocaleString('it-IT', {
