@@ -1,7 +1,7 @@
 let MaxPointGraph = 60; // numro massimo di punti da visualizzare nel grafico
 let loadNpoint = MaxPointGraph // numero di punti da caricare dal DB 
-let simulateDataElettro = false; // simuliamo i dati?
-let simulateDataSerra =false; // simuliamo i dati?
+let simulateDataElettro = true; // simuliamo i dati?
+let simulateDataSerra =true; // simuliamo i dati?
 let realTime = true; // dobbiamo fare la fetch dei dati attuali?
 let timeLaps = 5; // refresh ogni 2 secondi se non in simulaData
 const apiUrl = 'https://www.heliosproject.it/sensori/get-data-grafici.php';
@@ -220,8 +220,8 @@ async function updateCharts(second = timeLaps) {
         showLoader(true);
         return true;
     }
-    updateStatoPagina(data);
     //console.log(data);
+    updateStatoPagina(data);
 
     Object.keys(grafici).forEach((nome) => {
         if (nome in data) {
@@ -365,7 +365,7 @@ function generateAlarms(data){
                 <span id="status-text-alarm" class="status-text">Alarms</span>
             </div>
             <div class="status-item">
-                <div id="dotstatus--warning" class="status-dot"></div>
+                <div id="status-dot-warning" class="status-dot"></div>
                 <span id="status-text-warning" class="status-text">Warnings</span>
             </div>
         </div>`;
@@ -417,6 +417,7 @@ function generateAlarms(data){
     
     //console.log("alarms: ",alarms,"warnings: ",warnings);
     // emette il suono dell'allarme
+    /*
     if (alarms==1 || warnings==1){
         allarme.play();
     }
@@ -424,18 +425,17 @@ function generateAlarms(data){
         allarme.pause();
         allarme.currentTime = 0;
     }
-         
+    */   
     statusDot = document.getElementById("status-dot");
     statusText = document.getElementById("status-text");
     // Determina il colore del pallino
     if(simulateDataElettro == false) {
         dotColor = ping_elettro == 1 ? "green" : "red";
-        statusDot.style.backgroundColor = dotColor;
     }
     else {
         dotColor = ping_elettro == 1 ? "lightgreen" : "red";
-        statusDot.style.backgroundColor = dotColor;
     }
+    statusDot.style.backgroundColor = dotColor;
     
     // Determina il testo dello stato
     textStatus = ping_elettro == 1 ? "" : "non ";
@@ -621,6 +621,7 @@ function init() {
         createImageWebcamBlock(chartsContainer)
         // webcam
         // Primo caricamento
+        lastTimestamp=null;
         checkAndUpdateImage();
 
         // Controllo ogni 30 secondi
@@ -788,6 +789,7 @@ function toggleSimula() {
         console.log('Simulazione toggled in Elettrolizzatore');
     } else if (pagina === 'serra') {
         simulateDataSerra = !simulateDataSerra;
+        lastTimestamp = null;
         console.log('Simulazione toggled in Serra');
     }
     init();
@@ -840,38 +842,54 @@ window.onpopstate = function() {
 let lastTimestamp = null;
 let timerWebcam = null;
 
+
+
 function checkAndUpdateImage() { 
+    if (simulateDataSerra) {
+        const sec = 30;
+        
+        ora = new Date();
+        if (lastTimestamp==null)
+            lastTimestamp = new Date(ora.getTime() - sec * 1000);
+        if ((ora - lastTimestamp) / 1000 >= sec) {// vecchio di sec secondi?
+            lastTimestamp = ora;
+            const imageUrl = 'latest.jpg?t=' + ora.getTime();
+            document.getElementById('webcamImage').src = imageUrl;
+            document.getElementById('modalwebcamImg').src = imageUrl;
+            lastStr = ora.toLocaleString('it-IT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ' + lastStr;
+        }
+    }
+    else {
+        fetch('file-info.php')
+            .then(response => response.json())
+            .then(data => {
+                var currentTimestamp = data.timestamp;
     
-    // per provarla localmente 
-    /*
-    console.log('Nuova immagine trovata, aggiorno...');
-    const imageUrl = 'latest.jpg?t=' + new Date().getTime();
-    document.getElementById('webcamImage').src = imageUrl;
-    document.getElementById('modalwebcamImg').src = imageUrl;
-    document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ';
-    return;
-    */
-
-    fetch('file-info.php')
-        .then(response => response.json())
-        .then(data => {
-            const currentTimestamp = data.timestamp;
-
-            if (currentTimestamp !== lastTimestamp) {
-                //console.log('Nuova immagine trovata, aggiorno...');
-                const imageUrl = 'latest.jpg?t=' + new Date().getTime();
-                document.getElementById('webcamImage').src = imageUrl;
-                document.getElementById('modalwebcamImg').src = imageUrl;
-                document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ' + currentTimestamp;
-                lastTimestamp = currentTimestamp;
-            } else {
-                console.log('Immagine invariata.');
-            }
-        })
-        .catch(error => {
-            console.error('Errore nel caricamento data:', error);
-            document.getElementById('imageTimestamp').textContent = 'Impossibile ottenere data aggiornamento';
-        });
+                if (currentTimestamp !== lastTimestamp) {
+                    console.log('Nuova immagine trovata, aggiorno...');
+                    const imageUrl = 'latest.jpg?t=' + new Date().getTime();
+                    document.getElementById('webcamImage').src = imageUrl;
+                    document.getElementById('modalwebcamImg').src = imageUrl;
+                    document.getElementById('imageTimestamp').textContent = 'Ultimo aggiornamento: ' + currentTimestamp;
+                    lastTimestamp = currentTimestamp;
+                } else {
+                    console.log('Immagine invariata.');
+                }
+            })
+            .catch(error => {
+                console.error('Errore nel caricamento data:', error);
+                document.getElementById('imageTimestamp').textContent = 'Impossibile ottenere data aggiornamento';
+            });
+    }
 }
 
 // Modal funzionalità
